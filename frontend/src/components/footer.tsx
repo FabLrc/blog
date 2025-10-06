@@ -1,6 +1,7 @@
 import NewsletterForm from "@/components/newsletter-form";
 import { Separator } from "@/components/ui/separator";
 import { profileConfig } from "@/config/profile";
+import { Rss } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -10,6 +11,7 @@ export default function Footer() {
     { href: "/blog", label: "Blog" },
     { href: "/about", label: "À propos" },
     { href: "/contact", label: "Contact" },
+    { href: "/rss.xml", label: "RSS", external: true },
   ];
 
   return (
@@ -40,8 +42,10 @@ export default function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
+                {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
               >
+                {link.label === "RSS" && <Rss className="h-4 w-4" />}
                 {link.label}
               </Link>
             ))}

@@ -27,6 +27,12 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning className={dmSans.variable}>
       <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${profileConfig.blogTitle} - Flux RSS`}
+          href="/rss.xml"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
