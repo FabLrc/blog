@@ -1,3 +1,4 @@
+import { HeadingWithAnchor } from "@/components/heading-with-anchor";
 import { Card, CardContent } from "@/components/ui/card";
 import { getStrapiImageUrl } from "@/lib/strapi";
 import Image from "next/image";
@@ -48,70 +49,82 @@ interface BlockRendererProps {
 function RichText({ body }: { body: string }) {
   // Custom components for react-markdown to add IDs to headings for TOC
   const components: Components = {
-    h1: ({ children, ...props }) => {
+    h1: ({ children }) => {
       const text = children?.toString() || "";
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h1 
+        <HeadingWithAnchor 
           id={id} 
+          level={1}
           className="text-4xl font-bold mt-8 mb-4 tracking-tight"
-          {...props}
         >
           {children}
-        </h1>
+        </HeadingWithAnchor>
       );
     },
-    h2: ({ children, ...props }) => {
+    h2: ({ children }) => {
       const text = children?.toString() || "";
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h2 
+        <HeadingWithAnchor 
           id={id} 
+          level={2}
           className="text-3xl font-bold mt-8 mb-4 pb-2 border-b tracking-tight"
-          {...props}
         >
           {children}
-        </h2>
+        </HeadingWithAnchor>
       );
     },
-    h3: ({ children, ...props }) => {
+    h3: ({ children }) => {
       const text = children?.toString() || "";
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h3 
+        <HeadingWithAnchor 
           id={id} 
+          level={3}
           className="text-2xl font-bold mt-6 mb-3 tracking-tight"
-          {...props}
         >
           {children}
-        </h3>
+        </HeadingWithAnchor>
       );
     },
-    h4: ({ children, ...props }) => {
+    h4: ({ children }) => {
       const text = children?.toString() || "";
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h4 
+        <HeadingWithAnchor 
           id={id} 
+          level={4}
           className="text-xl font-bold mt-4 mb-2 tracking-tight"
-          {...props}
         >
           {children}
-        </h4>
+        </HeadingWithAnchor>
       );
     },
-    h5: ({ children, ...props }) => {
+    h5: ({ children }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h5 className="text-lg font-bold mt-3 mb-2 tracking-tight" {...props}>
+        <HeadingWithAnchor 
+          id={id} 
+          level={5}
+          className="text-lg font-bold mt-3 mb-2 tracking-tight"
+        >
           {children}
-        </h5>
+        </HeadingWithAnchor>
       );
     },
-    h6: ({ children, ...props }) => {
+    h6: ({ children }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return (
-        <h6 className="text-base font-bold mt-2 mb-1 tracking-tight" {...props}>
+        <HeadingWithAnchor 
+          id={id} 
+          level={6}
+          className="text-base font-bold mt-2 mb-1 tracking-tight"
+        >
           {children}
-        </h6>
+        </HeadingWithAnchor>
       );
     },
   };

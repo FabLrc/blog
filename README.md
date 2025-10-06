@@ -25,15 +25,33 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 
 ## ✨ Fonctionnalités
 
+### 📖 Contenu
 - ✅ Rendu Markdown complet (GFM)
 - ✅ Table des matières avec scroll spy
 - ✅ Navigation précédent/suivant
-- ✅ Temps de lecture estimé
+- ✅ Temps de lecture estimé (200 mots/min)
 - ✅ Filtres par catégorie
-- ✅ Mode sombre/clair
-- ✅ Partage social (X, LinkedIn, Facebook)
-- ✅ SEO optimisé (Open Graph, Twitter Cards)
-- ✅ Design responsive
+- ✅ Ancres de partage (copie lien vers section)
+
+### 🔍 Recherche & Navigation
+- ✅ Barre de recherche avec `Ctrl+K` / `Cmd+K`
+- ✅ Résultats en temps réel
+- ✅ Navbar sticky avec backdrop blur
+- ✅ Menu hamburger responsive
+
+### 🎨 Interface
+- ✅ Mode sombre/clair avec persistance
+- ✅ Thème TweakCN (Mocha Mousse)
+- ✅ Typographie DM Sans
+- ✅ Design responsive (mobile-first)
+- ✅ Sidebar unifiée (TOC + partage social)
+
+### 🚀 SEO & Performance
+- ✅ Sitemap XML automatique (`/sitemap.xml`)
+- ✅ Flux RSS (`/rss.xml`)
+- ✅ Robots.txt
+- ✅ Open Graph & Twitter Cards
+- ✅ Balises meta optimisées
 
 ## 📂 Structure
 
@@ -50,14 +68,41 @@ blog/
 
 ## ⚙️ Configuration
 
-- **Profil**: `frontend/src/config/profile.ts`
-- **Thème**: `frontend/src/app/globals.css`
+- **Profil**: `frontend/src/config/profile.ts` (nom, titre blog, bio, liens sociaux)
+- **Thème**: `frontend/src/app/globals.css` (couleurs, ombres, polices)
 - **Données démo**: `cd backend && npm run seed:example`
+
+## 🎨 Personnalisation
+
+### Changer le titre du blog
+Éditer `frontend/src/config/profile.ts`:
+```typescript
+blogTitle: "Mon Super Blog"
+```
+
+### URLs importantes
+- `/` - Page d'accueil
+- `/blog` - Liste des articles
+- `/blog/[slug]` - Article individuel
+- `/about` - À propos
+- `/contact` - Contact
+- `/rss.xml` - Flux RSS
+- `/sitemap.xml` - Sitemap SEO
+- `/robots.txt` - Instructions robots
+
+### Raccourcis clavier
+- `Ctrl+K` / `Cmd+K` - Ouvrir la recherche
+- `↑` / `↓` - Navigation dans les résultats
+- `Entrée` - Sélectionner un résultat
+- `Échap` - Fermer la recherche
 
 ## 🎯 Roadmap
 
-- [ ] Flux RSS
-- [ ] Analytics & SEO avancé
+- [ ] Coloration syntaxique des blocs de code
+- [ ] Système de commentaires (Giscus)
+- [ ] Newsletter fonctionnelle
+- [ ] Analytics (Plausible/Google Analytics)
+- [ ] JSON-LD pour rich snippets
 
 ## 🚢 Déploiement
 
