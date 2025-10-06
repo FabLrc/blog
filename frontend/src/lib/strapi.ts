@@ -222,3 +222,37 @@ export function extractTextFromBlocks(blocks: unknown[]): string {
 
   return text;
 }
+
+/**
+ * Search articles by query string
+ */
+export async function searchArticles(query: string): Promise<StrapiArticle[]> {
+  if (!query || query.trim().length === 0) {
+    return [];
+  }
+
+  try {
+    // Search in title and description
+    const response = await fetch(
+      `${STRAPI_API_URL}/articles?` +
+      `filters[$or][0][title][$containsi]=${encodeURIComponent(query)}&` +
+      `filters[$or][1][description][$containsi]=${encodeURIComponent(query)}&` +
+      `populate[0]=cover&populate[1]=categories&populate[2]=author.avatar&` +
+      `sort[0]=publishedAt:desc&` +
+      `pagination[limit]=10`,
+      {
+        next: { revalidate: 0 }, // Don't cache search results
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to search articles: ${response.statusText}`);
+    }
+
+    const data: StrapiResponse<StrapiArticle[]> = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error searching articles:", error);
+    return [];
+  }
+}
