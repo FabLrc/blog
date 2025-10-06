@@ -86,8 +86,6 @@ Le blog supporte **GitHub Flavored Markdown** (GFM) avec :
 - Citations
 - Lignes horizontales
 
-Voir `MARKDOWN_EXAMPLE.md` pour des exemples complets et `MARKDOWN_CONVERSION.md` pour la documentation technique.
-
 ## 🗂️ Structure du projet
 
 ```
@@ -161,6 +159,16 @@ Personnalisez votre profil dans `frontend/src/config/profile.ts` :
 - Liens vers vos réseaux sociaux
 - Compétences techniques
 - Centres d'intérêt
+
+### Thème et design
+
+Le projet utilise actuellement un **thème TweakCN** avec :
+- 🎨 Palette chaude et naturelle (beiges/bruns)
+- ✨ Ombres plates avec offset (effet papier découpé)
+- 🔤 Typographie DM Sans personnalisée
+- 📐 Radius de 0.5rem
+
+Pour personnaliser le thème, modifiez `frontend/src/app/globals.css`.
 
 ## 📊 Données de démonstration
 
