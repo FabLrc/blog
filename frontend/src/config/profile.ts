@@ -1,6 +1,9 @@
 // Configuration du profil personnel pour le blog
 
 export const profileConfig = {
+  // Informations du blog
+  blogTitle: "FabLrc", // Titre affiché dans la navbar, le footer et les metadata
+  
   // Informations personnelles
   name: "Fabien Laurence",
   title: "Développeur Full-Stack",

@@ -9,6 +9,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { profileConfig } from "@/config/profile";
 import { Moon, Sun } from "lucide-react";
 import Link from "next/link";
 
@@ -24,7 +25,7 @@ export default function Navbar() {
     <nav className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
-          Mon Blog
+          {profileConfig.blogTitle}
         </Link>
         <div className="flex items-center gap-4">
           <NavigationMenu>

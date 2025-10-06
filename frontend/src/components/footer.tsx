@@ -1,6 +1,7 @@
-import Link from "next/link";
 import NewsletterForm from "@/components/newsletter-form";
 import { Separator } from "@/components/ui/separator";
+import { profileConfig } from "@/config/profile";
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -26,7 +27,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="text-center md:text-left">
             <Link href="/" className="text-xl font-bold hover:text-primary transition-colors">
-              Mon Blog
+              {profileConfig.blogTitle}
             </Link>
             <p className="text-sm text-muted-foreground mt-1">
               Partage de connaissances et d&apos;expériences
@@ -48,7 +49,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="text-sm text-muted-foreground text-center md:text-right">
-            <p>&copy; {currentYear} Mon Blog</p>
+            <p>&copy; {currentYear} {profileConfig.blogTitle}</p>
             <p className="mt-1">Tous droits réservés</p>
           </div>
         </div>
