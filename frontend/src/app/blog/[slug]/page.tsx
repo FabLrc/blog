@@ -1,14 +1,14 @@
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import type { Metadata } from "next";
-import { getArticleBySlug } from "@/lib/strapi";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import BlockRenderer from "@/components/block-renderer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BlockRenderer from "@/components/block-renderer";
+import { profileConfig } from "@/config/profile";
+import { getArticleBySlug, getStrapiImageUrl } from "@/lib/strapi";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface ArticlePageProps {
   params: {
@@ -62,9 +62,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     ? getStrapiImageUrl(article.cover.url)
     : null;
 
+  // Utilise l'avatar de l'auteur depuis Strapi, sinon l'avatar de profil local
   const authorAvatarUrl = article.author?.avatar
     ? getStrapiImageUrl(article.author.avatar.url)
-    : null;
+    : profileConfig.avatar;
 
   const formattedDate = new Date(article.publishedAt).toLocaleDateString(
     "fr-FR",

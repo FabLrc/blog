@@ -1,9 +1,10 @@
-import { getArticles } from "@/lib/strapi";
-import { FeaturedArticle } from "@/components/featured-article";
 import ArticleCard from "@/components/article-card";
+import { FeaturedArticle } from "@/components/featured-article";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { profileConfig } from "@/config/profile";
+import { getArticles } from "@/lib/strapi";
 import { Github } from "lucide-react";
 import Link from "next/link";
 
@@ -16,21 +17,22 @@ export default async function Home() {
       {/* Profile Section */}
       <div className="mb-12 text-center">
         <Avatar className="mx-auto mb-4 h-24 w-24">
-          <AvatarImage src="https://github.com/FabLrc.png" alt="FabLrc" />
-          <AvatarFallback>FL</AvatarFallback>
+          <AvatarImage src={profileConfig.avatar} alt={profileConfig.name} />
+          <AvatarFallback>
+            {profileConfig.name.split(" ").map(n => n[0]).join("").toUpperCase()}
+          </AvatarFallback>
         </Avatar>
         
-        <h1 className="mb-2 text-3xl font-bold">FabLrc</h1>
+        <h1 className="mb-2 text-3xl font-bold">{profileConfig.name}</h1>
         
         <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
-          Développeur curieux qui partage ses découvertes autour du web, de l&apos;intelligence artificielle et des crypto-monnaies. 
-          J&apos;écris pour me souvenir et pour partager avec d&apos;autres.
+          {profileConfig.bio.intro}
         </p>
 
         <div className="flex justify-center gap-2">
           <Button variant="outline" size="sm" asChild>
             <a
-              href="https://github.com/FabLrc"
+              href={profileConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"
