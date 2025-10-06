@@ -78,3 +78,52 @@ export function getStrapiImageFormat(
   const formatUrl = image.formats?.[format]?.url || image.url;
   return getStrapiImageUrl(formatUrl);
 }
+
+/**
+ * Subscribe to newsletter
+ */
+export async function subscribeToNewsletter(
+  email: string,
+  source?: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch(`${STRAPI_API_URL}/newsletter-subscribers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          email,
+          source: source || "website",
+          subscribedAt: new Date().toISOString(),
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      
+      // Handle duplicate email error
+      if (response.status === 400 && errorData.error?.message?.includes("unique")) {
+        return {
+          success: false,
+          message: "Cet email est déjà inscrit à la newsletter.",
+        };
+      }
+      
+      throw new Error(errorData.error?.message || "Erreur lors de l'inscription");
+    }
+
+    return {
+      success: true,
+      message: "Inscription réussie ! Merci de vous être abonné.",
+    };
+  } catch (error) {
+    console.error("Newsletter subscription error:", error);
+    return {
+      success: false,
+      message: "Une erreur est survenue. Veuillez réessayer.",
+    };
+  }
+}
