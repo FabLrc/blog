@@ -1,15 +1,16 @@
 # 📝 Blog Full-Stack
 
-Un blog moderne et performant construit avec Next.js et Strapi CMS.
+Un blog personnel moderne et performant construit avec Next.js et Strapi CMS. Design minimaliste, mode sombre, et expérience utilisateur optimisée.
 
 ## 🚀 Technologies
 
 ### Frontend
 - **Next.js 15** - Framework React avec App Router
 - **TypeScript** - Typage statique
-- **Tailwind CSS v4** - Styling utilitaire
-- **ShadCN UI** - Composants UI élégants
+- **Tailwind CSS v4** - Styling utilitaire moderne
+- **ShadCN UI** - Composants UI élégants et accessibles
 - **Lucide React** - Icônes modernes
+- **React Context** - Gestion d'état pour le thème
 
 ### Backend
 - **Strapi v5** - Headless CMS
@@ -45,15 +46,21 @@ Le frontend sera disponible sur http://localhost:3000
 ## 🎯 Fonctionnalités
 
 ### ✅ Implémenté
-- 📄 Page d'accueil
-- 📚 Liste des articles de blog avec pagination visuelle
-- 📖 Page article individuel avec rendu des blocs de contenu
-- 🎨 Design responsive et épuré
-- 🖼️ Gestion des images via Strapi
-- 👤 Informations auteur avec avatar
-- 🏷️ Système de catégories
-- 🔍 SEO optimisé (meta tags, Open Graph, Twitter Cards)
-- 🧭 Navigation intuitive
+- 🏠 **Page d'accueil** avec profil personnalisé et articles récents
+- 📚 **Liste des articles** avec pagination visuelle et filtres par catégorie
+- 📖 **Pages articles** avec rendu des blocs de contenu riches
+- 📄 **Page "À propos"** personnalisable avec profil complet
+- 📧 **Page "Contact"** avec formulaire et protection anti-spam
+- 🌓 **Mode sombre/clair** paramétrable avec persistance localStorage
+- 🔗 **Partage social** (Twitter, LinkedIn, Facebook) avec boutons flottants
+- 🎨 **Design responsive** et minimaliste sur tous les écrans
+- 🖼️ **Gestion d'images** optimisée (Next.js Image + Strapi)
+- 👤 **Système d'auteurs** avec avatars et fallback sur image de profil locale
+- 🏷️ **Catégories** pour organiser les articles
+- 🔍 **SEO optimisé** (meta tags, Open Graph, Twitter Cards)
+- 🧭 **Navigation intuitive** avec indicateur de page active
+- 🛡️ **Protection email** anti-bots par obfuscation
+- ⚙️ **Configuration centralisée** du profil dans `config/profile.ts`
 
 ### 📋 Types de contenu Strapi
 - **Articles** : Titre, description, slug, image de couverture, contenu (blocs)
@@ -77,12 +84,29 @@ blog/
 │       └── api/     # Content types et endpoints
 │
 └── frontend/        # Application Next.js
-    ├── public/      # Assets statiques
+    ├── public/      # Assets statiques (profile.jpg, etc.)
     └── src/
-        ├── app/     # Pages et routing
-        ├── components/ # Composants React
-        ├── lib/     # Utilitaires et API
-        └── types/   # Types TypeScript
+        ├── app/          # Pages et routing (App Router)
+        │   ├── page.tsx           # Page d'accueil
+        │   ├── layout.tsx         # Layout principal
+        │   ├── blog/              # Liste des articles
+        │   │   └── [slug]/        # Page article dynamique
+        │   ├── about/             # Page "À propos"
+        │   ├── contact/           # Page "Contact"
+        │   └── not-found.tsx      # Page 404
+        ├── components/   # Composants React
+        │   ├── ui/               # Composants ShadCN UI
+        │   ├── theme-provider.tsx # Context du mode sombre
+        │   ├── navbar.tsx         # Navigation
+        │   ├── footer.tsx         # Footer
+        │   ├── social-share.tsx   # Boutons de partage
+        │   └── ...
+        ├── config/       # Configuration
+        │   └── profile.ts         # Configuration du profil
+        ├── lib/          # Utilitaires et API
+        │   ├── strapi.ts          # Client API Strapi
+        │   └── utils.ts           # Fonctions utilitaires
+        └── types/        # Types TypeScript
 ```
 
 ## 🔧 Configuration
@@ -92,11 +116,32 @@ blog/
 **Frontend** (`frontend/.env.local`):
 ```env
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+NEXT_PUBLIC_SITE_URL=http://localhost:3000  # URL du site (pour le partage social)
 ```
 
-**Backend** (`.env` déjà configuré):
-- Configuration de la base de données
-- Clés d'API Strapi
+**Backend** (`backend/.env.local`):
+```env
+HOST=0.0.0.0
+PORT=1337
+APP_KEYS="key1,key2"  # À générer (voir installation)
+API_TOKEN_SALT=xxxxx  # À générer
+ADMIN_JWT_SECRET=xxxxx  # À générer
+TRANSFER_TOKEN_SALT=xxxxx  # À générer
+JWT_SECRET=xxxxx  # À générer
+ENCRYPTION_KEY=xxxxx  # À générer
+```
+
+> **Note** : Les clés de sécurité doivent être générées avec des valeurs aléatoires sécurisées. Un fichier `.env.example` est fourni dans le backend.
+
+### Configuration du profil
+
+Personnalisez votre profil dans `frontend/src/config/profile.ts` :
+- Nom et titre
+- Biographie
+- Image de profil (placez votre photo dans `/public/profile.jpg`)
+- Liens vers vos réseaux sociaux
+- Compétences techniques
+- Centres d'intérêt
 
 ## 📊 Données de démonstration
 
@@ -109,22 +154,36 @@ npm run seed:example
 
 ## 🎨 Design System
 
-Le projet utilise **ShadCN UI** avec un thème neutre et épuré :
-- Composants : Card, Badge, Avatar, Separator, Navigation Menu
-- Palette de couleurs adaptative (light/dark)
-- Typographie optimisée pour la lecture
+Le projet utilise **ShadCN UI** avec un thème personnalisable :
+- **Composants** : Card, Badge, Avatar, Button, Input, Textarea, Label, Separator, Navigation Menu
+- **Thème** : Mode clair/sombre avec transition fluide
+- **Couleurs** : Palette adaptative utilisant oklch pour une meilleure cohérence
+- **Typographie** : Optimisée pour la lisibilité des articles
+- **Animations** : Transitions douces et micro-interactions
+- **Responsive** : Mobile-first avec breakpoints adaptés
 
-## 🚧 Développement futur
+## 🎯 Fonctionnalités à venir
 
-- [ ] Recherche d'articles
-- [ ] Filtres par catégorie
-- [ ] Page "À propos"
-- [ ] Page "Contact" avec formulaire
-- [ ] Commentaires
-- [ ] Partage social
-- [ ] Mode sombre/clair
+### Court terme
+- [ ] Recherche d'articles (barre de recherche)
+- [ ] Temps de lecture estimé pour chaque article
+- [ ] Table des matières auto-générée pour les longs articles
+- [ ] Articles "précédent/suivant" sur les pages articles
+- [ ] Statistiques publiques (nombre d'articles, catégories)
+
+### Moyen terme
+- [ ] Système de commentaires (Giscus)
+- [ ] Newsletter fonctionnelle (Mailchimp/ConvertKit)
+- [ ] Flux RSS
+- [ ] Page "Projets" / Portfolio
+- [ ] Archives par date
+
+### Long terme
+- [ ] Analytics (Plausible/Google Analytics)
+- [ ] SEO avancé (sitemap dynamique, JSON-LD)
 - [ ] Internationalisation (i18n)
-- [ ] Déploiement en production
+- [ ] Mode lecture amélioré
+- [ ] PWA (Progressive Web App)
 
 ## 📝 Scripts disponibles
 
@@ -144,10 +203,33 @@ npm run start      # Démarrer le build de production
 npm run lint       # Linter le code
 ```
 
-## 📄 License
+## � Déploiement
+
+### Frontend (Vercel recommandé)
+1. Push ton code sur GitHub
+2. Importe le projet sur Vercel
+3. Configure les variables d'environnement
+4. Déploie !
+
+### Backend (plusieurs options)
+- **Strapi Cloud** (recommandé)
+- **Railway**
+- **Heroku**
+- **VPS** (Digital Ocean, Linode)
+
+> N'oublie pas de configurer les webhooks Strapi pour redéployer automatiquement le frontend lors de la publication de nouveaux articles.
+
+## 🤝 Contribution
+
+Ce projet est personnel mais les suggestions sont les bienvenues ! N'hésite pas à ouvrir une issue pour :
+- Reporter un bug
+- Proposer une amélioration
+- Partager une idée de fonctionnalité
+
+## �📄 License
 
 Ce projet est à usage personnel/éducatif.
 
 ---
 
-Développé avec ❤️ en utilisant Next.js et Strapi
+✨ Développé avec ❤️ par [FabLrc](https://github.com/FabLrc) utilisant Next.js et Strapi

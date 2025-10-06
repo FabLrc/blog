@@ -1,4 +1,5 @@
 import BlockRenderer from "@/components/block-renderer";
+import SocialShare from "@/components/social-share";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -83,16 +84,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     .join("")
     .toUpperCase();
 
+  // URL de l'article pour le partage
+  const articleUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/blog/${article.slug}`;
+
   return (
-    <article className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Back button */}
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Retour au blog
-      </Link>
+    <>
+      {/* Social Share - Fixed on the left */}
+      <SocialShare title={article.title} url={articleUrl} />
+
+      <article className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Back button */}
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Retour au blog
+        </Link>
 
       {/* Categories badges */}
       {(() => {
@@ -177,5 +185,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </Link>
       </div>
     </article>
+    </>
   );
 }
