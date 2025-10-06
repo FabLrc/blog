@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { profileConfig } from "@/config/profile";
 import { getArticles } from "@/lib/strapi";
-import { Github } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+
+// Icône X (anciennement Twitter)
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 export default async function Home() {
   const articles = await getArticles(4);
@@ -30,15 +37,34 @@ export default async function Home() {
         </p>
 
         <div className="flex justify-center gap-2">
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="icon" asChild title="GitHub">
             <a
               href={profileConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2"
+              aria-label="GitHub"
             >
               <Github className="h-4 w-4" />
-              GitHub
+            </a>
+          </Button>
+          <Button variant="outline" size="icon" asChild title="LinkedIn">
+            <a
+              href={profileConfig.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
+              <Linkedin className="h-4 w-4" />
+            </a>
+          </Button>
+          <Button variant="outline" size="icon" asChild title="X (Twitter)">
+            <a
+              href={profileConfig.social.x}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X (Twitter)"
+            >
+              <XIcon className="h-4 w-4" />
             </a>
           </Button>
         </div>

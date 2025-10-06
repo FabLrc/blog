@@ -1,6 +1,9 @@
-import Image from "next/image";
-import { getStrapiImageUrl } from "@/lib/strapi";
 import { Card, CardContent } from "@/components/ui/card";
+import { getStrapiImageUrl } from "@/lib/strapi";
+import Image from "next/image";
+import type { Components } from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Block {
   __component: string;
@@ -43,13 +46,85 @@ interface BlockRendererProps {
 }
 
 function RichText({ body }: { body: string }) {
+  // Custom components for react-markdown to add IDs to headings for TOC
+  const components: Components = {
+    h1: ({ children, ...props }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+      return (
+        <h1 
+          id={id} 
+          className="text-4xl font-bold mt-8 mb-4 tracking-tight"
+          {...props}
+        >
+          {children}
+        </h1>
+      );
+    },
+    h2: ({ children, ...props }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+      return (
+        <h2 
+          id={id} 
+          className="text-3xl font-bold mt-8 mb-4 pb-2 border-b tracking-tight"
+          {...props}
+        >
+          {children}
+        </h2>
+      );
+    },
+    h3: ({ children, ...props }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+      return (
+        <h3 
+          id={id} 
+          className="text-2xl font-bold mt-6 mb-3 tracking-tight"
+          {...props}
+        >
+          {children}
+        </h3>
+      );
+    },
+    h4: ({ children, ...props }) => {
+      const text = children?.toString() || "";
+      const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+      return (
+        <h4 
+          id={id} 
+          className="text-xl font-bold mt-4 mb-2 tracking-tight"
+          {...props}
+        >
+          {children}
+        </h4>
+      );
+    },
+    h5: ({ children, ...props }) => {
+      return (
+        <h5 className="text-lg font-bold mt-3 mb-2 tracking-tight" {...props}>
+          {children}
+        </h5>
+      );
+    },
+    h6: ({ children, ...props }) => {
+      return (
+        <h6 className="text-base font-bold mt-2 mb-1 tracking-tight" {...props}>
+          {children}
+        </h6>
+      );
+    },
+  };
+
   return (
-    <div
-      className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-a:text-primary"
-      dangerouslySetInnerHTML={{
-        __html: body.replace(/\n/g, "<br />").replace(/## /g, "<h2>").replace(/<\/h2><br \/>/g, "</h2>"),
-      }}
-    />
+    <div className="prose prose-lg max-w-none dark:prose-invert">
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]}
+        components={components}
+      >
+        {body}
+      </ReactMarkdown>
+    </div>
   );
 }
 

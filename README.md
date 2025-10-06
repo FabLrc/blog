@@ -53,6 +53,9 @@ Le frontend sera disponible sur http://localhost:3000
 - 📧 **Page "Contact"** avec formulaire et protection anti-spam
 - 🌓 **Mode sombre/clair** paramétrable avec persistance localStorage
 - 🔗 **Partage social** (X/Twitter, LinkedIn, Facebook) avec boutons flottants
+- 📑 **Table des matières** auto-générée avec scroll spy pour les longs articles
+- ⏭️ **Navigation article** précédent/suivant basée sur la date de publication
+- 📝 **Support Markdown complet** (GFM) avec conversion en HTML propre
 - 🎨 **Design responsive** et minimaliste sur tous les écrans
 - 🖼️ **Gestion d'images** optimisée (Next.js Image + Strapi)
 - 👤 **Système d'auteurs** avec avatars et fallback sur image de profil locale
@@ -67,10 +70,23 @@ Le frontend sera disponible sur http://localhost:3000
 - **Auteurs** : Nom, email, avatar
 - **Catégories** : Nom, slug
 - **Blocs de contenu** :
-  - Rich Text (Markdown)
+  - Rich Text (Markdown avec support complet de la syntaxe)
   - Citations
   - Images
   - Galeries (Slider)
+
+### 📝 Support Markdown
+Le blog supporte **GitHub Flavored Markdown** (GFM) avec :
+- Titres (`#` à `######`) avec génération automatique d'IDs pour ancres
+- Formatage (gras, italique, barré, code inline)
+- Listes (ordonnées, non-ordonnées, tâches)
+- Liens et images
+- Blocs de code avec coloration syntaxique
+- Tableaux
+- Citations
+- Lignes horizontales
+
+Voir `MARKDOWN_EXAMPLE.md` pour des exemples complets et `MARKDOWN_CONVERSION.md` pour la documentation technique.
 
 ## 🗂️ Structure du projet
 
@@ -100,6 +116,9 @@ blog/
         │   ├── navbar.tsx         # Navigation
         │   ├── footer.tsx         # Footer
         │   ├── social-share.tsx   # Boutons de partage
+        │   ├── table-of-contents.tsx  # Table des matières
+        │   ├── article-navigation.tsx # Navigation prev/next
+        │   ├── block-renderer.tsx     # Rendu Markdown → HTML
         │   └── ...
         ├── config/       # Configuration
         │   └── profile.ts         # Configuration du profil
@@ -167,8 +186,7 @@ Le projet utilise **ShadCN UI** avec un thème personnalisable :
 ### Court terme
 - [ ] Recherche d'articles (barre de recherche)
 - [ ] Temps de lecture estimé pour chaque article
-- [ ] Table des matières auto-générée pour les longs articles
-- [ ] Articles "précédent/suivant" sur les pages articles
+- [ ] Coloration syntaxique pour les blocs de code (rehype-highlight)
 - [ ] Statistiques publiques (nombre d'articles, catégories)
 
 ### Moyen terme

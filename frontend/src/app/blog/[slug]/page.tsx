@@ -1,10 +1,11 @@
+import { ArticleNavigation } from "@/components/article-navigation";
+import ArticleSidebar from "@/components/article-sidebar";
 import BlockRenderer from "@/components/block-renderer";
-import SocialShare from "@/components/social-share";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { profileConfig } from "@/config/profile";
-import { getArticleBySlug, getStrapiImageUrl } from "@/lib/strapi";
+import { getArticleBySlug, getNextArticle, getPreviousArticle, getStrapiImageUrl } from "@/lib/strapi";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -59,6 +60,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  // Get previous and next articles
+  const [previousArticle, nextArticle] = await Promise.all([
+    getPreviousArticle(article.publishedAt),
+    getNextArticle(article.publishedAt),
+  ]);
+
   const coverImageUrl = article.cover
     ? getStrapiImageUrl(article.cover.url)
     : null;
@@ -89,9 +96,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <>
-      {/* Social Share - Fixed on the left */}
-      <SocialShare title={article.title} url={articleUrl} />
-
       <article className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Back button */}
         <Link
@@ -168,9 +172,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       )}
 
       {/* Article content blocks */}
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none" id="article-content">
         {article.blocks && <BlockRenderer blocks={article.blocks} />}
       </div>
+
+      {/* Article Navigation */}
+      <ArticleNavigation
+        previousArticle={previousArticle}
+        nextArticle={nextArticle}
+      />
 
       <Separator className="my-12" />
 
@@ -185,6 +195,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </Link>
       </div>
     </article>
+
+    {/* Article Sidebar - Fixed on the right (TOC + Share) */}
+    <ArticleSidebar title={article.title} url={articleUrl} />
     </>
   );
 }

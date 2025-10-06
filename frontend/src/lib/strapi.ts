@@ -151,3 +151,55 @@ export async function getCategories() {
     return [];
   }
 }
+
+/**
+ * Get the previous article (published earlier)
+ */
+export async function getPreviousArticle(
+  currentPublishedAt: string
+): Promise<StrapiArticle | null> {
+  try {
+    const response = await fetch(
+      `${STRAPI_API_URL}/articles?filters[publishedAt][$lt]=${currentPublishedAt}&populate[0]=cover&sort[0]=publishedAt:desc&pagination[limit]=1`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch previous article: ${response.statusText}`);
+    }
+
+    const data: StrapiResponse<StrapiArticle[]> = await response.json();
+    return data.data[0] || null;
+  } catch (error) {
+    console.error("Error fetching previous article:", error);
+    return null;
+  }
+}
+
+/**
+ * Get the next article (published later)
+ */
+export async function getNextArticle(
+  currentPublishedAt: string
+): Promise<StrapiArticle | null> {
+  try {
+    const response = await fetch(
+      `${STRAPI_API_URL}/articles?filters[publishedAt][$gt]=${currentPublishedAt}&populate[0]=cover&sort[0]=publishedAt:asc&pagination[limit]=1`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch next article: ${response.statusText}`);
+    }
+
+    const data: StrapiResponse<StrapiArticle[]> = await response.json();
+    return data.data[0] || null;
+  } catch (error) {
+    console.error("Error fetching next article:", error);
+    return null;
+  }
+}
