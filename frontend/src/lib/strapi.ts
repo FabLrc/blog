@@ -6,14 +6,17 @@ const STRAPI_API_URL = `${STRAPI_URL}/api`;
 /**
  * Fetch all published articles from Strapi
  */
-export async function getArticles(): Promise<StrapiArticle[]> {
+export async function getArticles(limit?: number): Promise<StrapiArticle[]> {
   try {
-    const response = await fetch(
-      `${STRAPI_API_URL}/articles?populate[0]=cover&populate[1]=category&populate[2]=author.avatar&sort[0]=publishedAt:desc`,
-      {
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
-      }
-    );
+    let url = `${STRAPI_API_URL}/articles?populate[0]=cover&populate[1]=category&populate[2]=author.avatar&sort[0]=publishedAt:desc`;
+    
+    if (limit) {
+      url += `&pagination[limit]=${limit}`;
+    }
+    
+    const response = await fetch(url, {
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch articles: ${response.statusText}`);
