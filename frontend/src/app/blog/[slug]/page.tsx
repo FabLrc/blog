@@ -93,14 +93,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         Retour au blog
       </Link>
 
-      {/* Category badge */}
-      {article.category && (
-        <div className="mb-4">
-          <Badge variant="secondary" className="text-sm">
-            {article.category.name}
-          </Badge>
-        </div>
-      )}
+      {/* Categories badges */}
+      {(() => {
+        const categories = article.categories || (article.category ? [article.category] : []);
+        if (categories.length > 0) {
+          return (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <Badge key={cat.id} variant="secondary" className="text-sm">
+                  {cat.name}
+                </Badge>
+              ))}
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Title */}
       <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">

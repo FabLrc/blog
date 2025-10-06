@@ -55,7 +55,8 @@ export interface StrapiArticle {
   slug: string;
   cover?: StrapiImage;
   author?: StrapiAuthor;
-  category?: StrapiCategory;
+  category?: StrapiCategory; // Keeping for backward compatibility
+  categories?: StrapiCategory[]; // Support multiple categories
   blocks?: unknown[];
   createdAt: string;
   updatedAt: string;

@@ -9,13 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getStrapiImageUrl } from "@/lib/strapi";
+import { StrapiCategory } from "@/types/strapi";
 
 interface ArticleCardProps {
   slug: string;
   title: string;
   excerpt: string;
   coverImage: string;
-  category: string;
+  categories?: StrapiCategory[];
   publishedAt: string;
 }
 
@@ -24,7 +25,7 @@ export default function ArticleCard({
   title,
   excerpt,
   coverImage,
-  category,
+  categories = [],
   publishedAt,
 }: ArticleCardProps) {
   const formattedDate = new Date(publishedAt).toLocaleDateString("fr-FR", {
@@ -53,9 +54,21 @@ export default function ArticleCard({
           )}
         </div>
         <CardHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary">{category}</Badge>
-            <span className="text-sm text-muted-foreground">{formattedDate}</span>
+          <div className="flex items-start gap-2 mb-2 flex-wrap">
+            <div className="flex flex-wrap gap-1.5">
+              {categories.length > 0 ? (
+                categories.map((cat) => (
+                  <Badge key={cat.id} variant="secondary">
+                    {cat.name}
+                  </Badge>
+                ))
+              ) : (
+                <Badge variant="secondary">Non catégorisé</Badge>
+              )}
+            </div>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              {formattedDate}
+            </span>
           </div>
           <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
             {title}

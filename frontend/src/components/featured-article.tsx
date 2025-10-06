@@ -36,13 +36,26 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
           className="object-cover transition-transform group-hover:scale-105"
           priority
         />
-        {article.category && (
-          <div className="absolute left-4 top-4">
-            <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm">
-              {article.category.name}
-            </Badge>
-          </div>
-        )}
+        {/* Display multiple categories */}
+        {(() => {
+          const categories = article.categories || (article.category ? [article.category] : []);
+          if (categories.length > 0) {
+            return (
+              <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <Badge
+                    key={cat.id}
+                    variant="secondary"
+                    className="bg-background/90 backdrop-blur-sm"
+                  >
+                    {cat.name}
+                  </Badge>
+                ))}
+              </div>
+            );
+          }
+          return null;
+        })()}
       </div>
       <div className="p-6">
         <h2 className="mb-3 text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">

@@ -8,7 +8,7 @@ const STRAPI_API_URL = `${STRAPI_URL}/api`;
  */
 export async function getArticles(limit?: number): Promise<StrapiArticle[]> {
   try {
-    let url = `${STRAPI_API_URL}/articles?populate[0]=cover&populate[1]=category&populate[2]=author.avatar&sort[0]=publishedAt:desc`;
+    let url = `${STRAPI_API_URL}/articles?populate[0]=cover&populate[1]=categories&populate[2]=author.avatar&sort[0]=publishedAt:desc`;
     
     if (limit) {
       url += `&pagination[limit]=${limit}`;
@@ -38,7 +38,7 @@ export async function getArticleBySlug(
 ): Promise<StrapiArticle | null> {
   try {
     const response = await fetch(
-      `${STRAPI_API_URL}/articles?filters[slug][$eq]=${slug}&populate[0]=cover&populate[1]=category&populate[2]=author.avatar&populate[3]=blocks`,
+      `${STRAPI_API_URL}/articles?filters[slug][$eq]=${slug}&populate[0]=cover&populate[1]=categories&populate[2]=author.avatar&populate[3]=blocks`,
       {
         next: { revalidate: 60 },
       }
@@ -128,5 +128,26 @@ export async function subscribeToNewsletter(
       success: false,
       message: "Une erreur est survenue. Veuillez réessayer.",
     };
+  }
+}
+
+/**
+ * Fetch all categories from Strapi
+ */
+export async function getCategories() {
+  try {
+    const response = await fetch(`${STRAPI_API_URL}/categories?sort[0]=name:asc`, {
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch categories: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [];
   }
 }

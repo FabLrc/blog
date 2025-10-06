@@ -57,17 +57,21 @@ export default async function Home() {
         <div className="mb-12">
           <h2 className="mb-6 text-2xl font-bold">Articles récents</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recentArticles.map((article) => (
-              <ArticleCard
-                key={article.id}
-                slug={article.slug}
-                title={article.title}
-                excerpt={article.description}
-                coverImage={article.cover?.url || ""}
-                category={article.category?.name || ""}
-                publishedAt={article.publishedAt}
-              />
-            ))}
+            {recentArticles.map((article) => {
+              const categories = article.categories || (article.category ? [article.category] : []);
+              
+              return (
+                <ArticleCard
+                  key={article.id}
+                  slug={article.slug}
+                  title={article.title}
+                  excerpt={article.description}
+                  coverImage={article.cover?.url || ""}
+                  categories={categories}
+                  publishedAt={article.publishedAt}
+                />
+              );
+            })}
           </div>
         </div>
       )}
