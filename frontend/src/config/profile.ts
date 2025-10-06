@@ -2,7 +2,7 @@
 
 export const profileConfig = {
   // Informations personnelles
-  name: "Votre Nom",
+  name: "Fabien Laurence",
   title: "Développeur Full-Stack",
   avatar: "/profile.jpg", // Placez votre image de profil dans /public/profile.jpg
   
@@ -15,10 +15,10 @@ export const profileConfig = {
   
   // Liens sociaux
   social: {
-    github: "https://github.com/votre-username",
-    linkedin: "https://linkedin.com/in/votre-username",
+    github: "https://github.com/FabLrc",
+    linkedin: "https://linkedin.com/in/fabien.laurence6",
     twitter: "https://twitter.com/votre-username",
-    email: "contact@monblog.com", // Utilisé pour l'obfuscation dans la page contact
+    email: "contact@fabienlaurence.com", // Utilisé pour l'obfuscation dans la page contact
   },
   
   // Compétences
