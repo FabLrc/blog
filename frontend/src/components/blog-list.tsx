@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { StrapiArticle, StrapiCategory } from "@/types/strapi";
-import { CategoryFilter } from "./category-filter";
+import { useMemo, useState } from "react";
 import ArticleCard from "./article-card";
+import { CategoryFilter } from "./category-filter";
 
 interface BlogListProps {
   initialArticles: StrapiArticle[];
@@ -69,6 +69,7 @@ export function BlogList({ initialArticles, categories }: BlogListProps) {
                 coverImage={article.cover?.url || ""}
                 categories={articleCategories}
                 publishedAt={article.publishedAt}
+                blocks={article.blocks}
               />
             );
           })}

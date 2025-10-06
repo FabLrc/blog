@@ -1,15 +1,17 @@
-import Link from "next/link";
-import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { extractTextFromBlocks, getStrapiImageUrl } from "@/lib/strapi";
+import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
 import { StrapiCategory } from "@/types/strapi";
+import { Clock } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface ArticleCardProps {
   slug: string;
@@ -18,6 +20,7 @@ interface ArticleCardProps {
   coverImage: string;
   categories?: StrapiCategory[];
   publishedAt: string;
+  blocks?: unknown[];
 }
 
 export default function ArticleCard({
@@ -27,6 +30,7 @@ export default function ArticleCard({
   coverImage,
   categories = [],
   publishedAt,
+  blocks = [],
 }: ArticleCardProps) {
   const formattedDate = new Date(publishedAt).toLocaleDateString("fr-FR", {
     year: "numeric",
@@ -35,6 +39,11 @@ export default function ArticleCard({
   });
 
   const imageUrl = getStrapiImageUrl(coverImage);
+
+  // Calculate reading time
+  const articleText = extractTextFromBlocks(blocks);
+  const readingMinutes = calculateReadingTime(articleText);
+  const readingTimeText = formatReadingTime(readingMinutes);
 
   return (
     <Link href={`/blog/${slug}`} className="group block">
@@ -66,13 +75,18 @@ export default function ArticleCard({
                 <Badge variant="secondary">Non catégorisé</Badge>
               )}
             </div>
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              {formattedDate}
-            </span>
           </div>
           <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
             {title}
           </CardTitle>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground pt-2">
+            <span>{formattedDate}</span>
+            <span>•</span>
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{readingTimeText}</span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <CardDescription className="line-clamp-3">{excerpt}</CardDescription>

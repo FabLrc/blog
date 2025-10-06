@@ -203,3 +203,22 @@ export async function getNextArticle(
     return null;
   }
 }
+
+/**
+ * Extract text content from article blocks for reading time calculation
+ */
+export function extractTextFromBlocks(blocks: unknown[]): string {
+  if (!blocks || blocks.length === 0) return '';
+
+  let text = '';
+
+  blocks.forEach((block: any) => {
+    if (block.__component === 'shared.rich-text' && block.body) {
+      text += block.body + ' ';
+    } else if (block.__component === 'shared.quote' && block.body) {
+      text += block.body + ' ';
+    }
+  });
+
+  return text;
+}

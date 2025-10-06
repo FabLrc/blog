@@ -1,9 +1,10 @@
+import { Badge } from "@/components/ui/badge";
+import { extractTextFromBlocks, getStrapiImageUrl } from "@/lib/strapi";
+import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
+import { StrapiArticle } from "@/types/strapi";
+import { Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { StrapiArticle } from "@/types/strapi";
-import { getStrapiImageUrl } from "@/lib/strapi";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
 
 interface FeaturedArticleProps {
   article: StrapiArticle;
@@ -22,6 +23,11 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
       day: "numeric",
     }
   );
+
+  // Calculate reading time
+  const articleText = extractTextFromBlocks(article.blocks || []);
+  const readingMinutes = calculateReadingTime(articleText);
+  const readingTimeText = formatReadingTime(readingMinutes);
 
   return (
     <Link
@@ -64,9 +70,16 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
         <p className="mb-4 text-muted-foreground line-clamp-2">
           {article.description}
         </p>
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Calendar className="mr-2 h-4 w-4" />
-          <time dateTime={article.publishedAt}>{publishedDate}</time>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center">
+            <Calendar className="mr-2 h-4 w-4" />
+            <time dateTime={article.publishedAt}>{publishedDate}</time>
+          </div>
+          <span>•</span>
+          <div className="flex items-center">
+            <Clock className="mr-2 h-4 w-4" />
+            <span>{readingTimeText}</span>
+          </div>
         </div>
       </div>
     </Link>

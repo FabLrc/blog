@@ -5,8 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { profileConfig } from "@/config/profile";
-import { getArticleBySlug, getNextArticle, getPreviousArticle, getStrapiImageUrl } from "@/lib/strapi";
-import { ArrowLeft } from "lucide-react";
+import { extractTextFromBlocks, getArticleBySlug, getNextArticle, getPreviousArticle, getStrapiImageUrl } from "@/lib/strapi";
+import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
+import { ArrowLeft, Clock } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -96,6 +97,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // URL de l'article pour le partage
   const articleUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/blog/${article.slug}`;
 
+  // Calculate reading time
+  const articleText = extractTextFromBlocks(article.blocks || []);
+  const readingMinutes = calculateReadingTime(articleText);
+  const readingTimeText = formatReadingTime(readingMinutes);
+
   return (
     <>
       <article className="container mx-auto px-4 py-8 max-w-4xl">
@@ -149,12 +155,26 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </Avatar>
             <div>
               <p className="font-medium">{article.author.name}</p>
-              <p className="text-sm text-muted-foreground">{formattedDate}</p>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <span>{formattedDate}</span>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4" />
+                  <span>{readingTimeText}</span>
+                </div>
+              </div>
             </div>
           </>
         )}
         {!article.author && (
-          <p className="text-sm text-muted-foreground">{formattedDate}</p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>{formattedDate}</span>
+            <span>•</span>
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4" />
+              <span>{readingTimeText}</span>
+            </div>
+          </div>
         )}
       </div>
 
