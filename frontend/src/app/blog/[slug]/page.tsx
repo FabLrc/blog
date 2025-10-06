@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BlockRenderer from "@/components/block-renderer";
-import NewsletterForm from "@/components/newsletter-form";
 import { ArrowLeft } from "lucide-react";
 
 interface ArticlePageProps {
@@ -154,13 +153,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {/* Article content blocks */}
       <div className="prose prose-lg max-w-none">
         {article.blocks && <BlockRenderer blocks={article.blocks} />}
-      </div>
-
-      <Separator className="my-12" />
-
-      {/* Newsletter subscription */}
-      <div className="my-12">
-        <NewsletterForm source="article" />
       </div>
 
       <Separator className="my-12" />
