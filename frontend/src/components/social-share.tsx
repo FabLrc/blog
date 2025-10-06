@@ -1,8 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check, Facebook, Link2, Linkedin, Twitter } from "lucide-react";
+import { Check, Facebook, Link2, Linkedin } from "lucide-react";
 import { useState } from "react";
+
+// Icône X (anciennement Twitter)
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 interface SocialShareProps {
   title: string;
@@ -13,7 +20,7 @@ export default function SocialShare({ title, url }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
 
   const shareLinks = {
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
   };
@@ -35,20 +42,20 @@ export default function SocialShare({ title, url }: SocialShareProps) {
           Partager
         </div>
         
-        {/* Twitter */}
+        {/* X (Twitter) */}
         <Button
           variant="outline"
           size="icon"
           asChild
-          className="hover:bg-[#1DA1F2] hover:text-white hover:border-[#1DA1F2] transition-colors"
+          className="hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black hover:border-black dark:hover:border-white transition-colors"
         >
           <a
-            href={shareLinks.twitter}
+            href={shareLinks.x}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Partager sur Twitter"
+            aria-label="Partager sur X"
           >
-            <Twitter className="w-4 h-4" />
+            <XIcon className="w-4 h-4" />
           </a>
         </Button>
 

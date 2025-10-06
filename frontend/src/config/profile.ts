@@ -16,8 +16,8 @@ export const profileConfig = {
   // Liens sociaux
   social: {
     github: "https://github.com/FabLrc",
-    linkedin: "https://linkedin.com/in/fabien.laurence6",
-    twitter: "https://twitter.com/votre-username",
+    linkedin: "https://www.linkedin.com/in/flaurence/",
+    x: "https://x.com/FabienLrc", // Anciennement Twitter
     email: "contact@fabienlaurence.com", // Utilisé pour l'obfuscation dans la page contact
   },
   
@@ -31,22 +31,6 @@ export const profileConfig = {
     "Strapi",
     "PostgreSQL",
     "Git",
-  ],
-  
-  // Centres d'intérêt (affichés sur la page À propos)
-  interests: [
-    {
-      title: "Développement Web",
-      description: "Passionné par la création d'expériences web modernes et performantes",
-    },
-    {
-      title: "Café & Code",
-      description: "Un bon café et quelques lignes de code, la combinaison parfaite",
-    },
-    {
-      title: "Apprentissage",
-      description: "Toujours curieux d'apprendre de nouvelles technologies et techniques",
-    },
   ],
 } as const;
 

@@ -52,12 +52,12 @@ Le frontend sera disponible sur http://localhost:3000
 - 📄 **Page "À propos"** personnalisable avec profil complet
 - 📧 **Page "Contact"** avec formulaire et protection anti-spam
 - 🌓 **Mode sombre/clair** paramétrable avec persistance localStorage
-- 🔗 **Partage social** (Twitter, LinkedIn, Facebook) avec boutons flottants
+- 🔗 **Partage social** (X/Twitter, LinkedIn, Facebook) avec boutons flottants
 - 🎨 **Design responsive** et minimaliste sur tous les écrans
 - 🖼️ **Gestion d'images** optimisée (Next.js Image + Strapi)
 - 👤 **Système d'auteurs** avec avatars et fallback sur image de profil locale
 - 🏷️ **Catégories** pour organiser les articles
-- 🔍 **SEO optimisé** (meta tags, Open Graph, Twitter Cards)
+- 🔍 **SEO optimisé** (meta tags, Open Graph, X/Twitter Cards)
 - 🧭 **Navigation intuitive** avec indicateur de page active
 - 🛡️ **Protection email** anti-bots par obfuscation
 - ⚙️ **Configuration centralisée** du profil dans `config/profile.ts`

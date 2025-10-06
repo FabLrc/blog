@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { profileConfig } from "@/config/profile";
 import { Mail, MessageSquare, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -191,17 +192,17 @@ export default function ContactPage() {
                 <h3 className="font-semibold mb-1">Suivez-moi aussi sur</h3>
                 <div className="space-y-2 text-muted-foreground">
                   <div>
-                    <a href="#" className="hover:text-primary transition-colors">
-                      Twitter
+                    <a href={profileConfig.social.x} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                      X (Twitter)
                     </a>
                   </div>
                   <div>
-                    <a href="#" className="hover:text-primary transition-colors">
+                    <a href={profileConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                       LinkedIn
                     </a>
                   </div>
                   <div>
-                    <a href="#" className="hover:text-primary transition-colors">
+                    <a href={profileConfig.social.github} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                       GitHub
                     </a>
                   </div>
