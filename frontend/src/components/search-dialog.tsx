@@ -65,7 +65,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
             {!loading && query && results.length === 0 && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Aucun article trouvé pour "{query}"
+                Aucun article trouvé pour &ldquo;{query}&rdquo;
               </div>
             )}
 

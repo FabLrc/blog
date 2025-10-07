@@ -5,8 +5,7 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { profileConfig } from "@/config/profile";
-import { extractTextFromBlocks, getArticleBySlug, getNextArticle, getPreviousArticle, getStrapiImageUrl } from "@/lib/strapi";
+import { extractTextFromBlocks, getArticleBySlug, getNextArticle, getPreviousArticle, getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
 import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
 import { ArrowLeft, Clock } from "lucide-react";
 import type { Metadata } from "next";
@@ -64,20 +63,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  // Get previous and next articles
-  const [previousArticle, nextArticle] = await Promise.all([
+  // Get previous and next articles and site config
+  const [previousArticle, nextArticle, siteConfig] = await Promise.all([
     getPreviousArticle(article.publishedAt),
     getNextArticle(article.publishedAt),
+    getSiteConfig(),
   ]);
 
   const coverImageUrl = article.cover
     ? getStrapiImageUrl(article.cover.url)
     : null;
 
-  // Utilise l'avatar de l'auteur depuis Strapi, sinon l'avatar de profil local
+  // Utilise l'avatar de l'auteur depuis Strapi, sinon l'avatar de profil depuis siteConfig ou GitHub
   const authorAvatarUrl = article.author?.avatar
     ? getStrapiImageUrl(article.author.avatar.url)
-    : profileConfig.avatar;
+    : siteConfig.profileAvatar
+    ? getStrapiImageUrl(siteConfig.profileAvatar.url)
+    : `https://github.com/${siteConfig.profileUsername}.png`;
 
   const formattedDate = new Date(article.publishedAt).toLocaleDateString(
     "fr-FR",

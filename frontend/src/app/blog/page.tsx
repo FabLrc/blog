@@ -1,6 +1,7 @@
 import { getArticles, getCategories } from "@/lib/strapi";
 import { BlogList } from "@/components/blog-list";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { Suspense } from "react";
 
 export default async function BlogPage() {
   const [articles, categories] = await Promise.all([
@@ -32,7 +33,9 @@ export default async function BlogPage() {
             Aucun article disponible pour le moment.
           </p>
         ) : (
-          <BlogList initialArticles={articles} categories={categories} />
+          <Suspense fallback={<div>Chargement...</div>}>
+            <BlogList initialArticles={articles} categories={categories} />
+          </Suspense>
         )}
       </div>
     </div>

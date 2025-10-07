@@ -1,62 +1,10 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { profileConfig } from "@/config/profile";
-import { Mail, MessageSquare, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { getSiteConfig } from "@/lib/strapi";
+import { Mail, MessageSquare } from "lucide-react";
+import { ContactForm } from "@/components/contact-form";
 
-export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [decodedEmail, setDecodedEmail] = useState("");
-
-  // Obfuscation de l'email (protection contre les bots)
-  useEffect(() => {
-    // Email encodé en base64 inversé
-    const encoded = "moc.golbnom@tcatnoc";
-    const email = encoded.split("").reverse().join("");
-    setDecodedEmail(email);
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-
-    // Simulation d'envoi (à remplacer par un vrai endpoint API)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setSubmitStatus("success");
-    
-    // Réinitialiser le formulaire
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
-
-    // Réinitialiser le statut après 3 secondes
-    setTimeout(() => setSubmitStatus("idle"), 3000);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+export default async function ContactPage() {
+  const siteConfig = await getSiteConfig();
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">
@@ -81,86 +29,7 @@ export default function ContactPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nom complet</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="John Doe"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="john@example.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Sujet</Label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    type="text"
-                    placeholder="À propos de..."
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder="Votre message..."
-                    rows={6}
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                {submitStatus === "success" && (
-                  <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-green-800 dark:text-green-200">
-                    ✓ Merci ! J&apos;ai bien reçu votre message et je vous répondrai très bientôt 🎉
-                  </div>
-                )}
-
-                {submitStatus === "error" && (
-                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-200">
-                    ✗ Oups, quelque chose s&apos;est mal passé... Pourriez-vous réessayer ? 🙏
-                  </div>
-                )}
-
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <span className="animate-spin mr-2">⏳</span>
-                      Envoi en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Envoyer le message
-                    </>
-                  )}
-                </Button>
-              </form>
+              <ContactForm />
             </CardContent>
           </Card>
         </div>
@@ -175,39 +44,45 @@ export default function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-1">Email</h3>
-                {decodedEmail ? (
+              {siteConfig.profileEmail && (
+                <div>
+                  <h3 className="font-semibold mb-1">Email</h3>
                   <a
-                    href={`mailto:${decodedEmail}`}
+                    href={`mailto:${siteConfig.profileEmail}`}
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {decodedEmail}
+                    {siteConfig.profileEmail}
                   </a>
-                ) : (
-                  <span className="text-muted-foreground">Chargement...</span>
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Suivez-moi aussi sur</h3>
-                <div className="space-y-2 text-muted-foreground">
-                  <div>
-                    <a href={profileConfig.social.x} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                      X (Twitter)
-                    </a>
-                  </div>
-                  <div>
-                    <a href={profileConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                      LinkedIn
-                    </a>
-                  </div>
-                  <div>
-                    <a href={profileConfig.social.github} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                      GitHub
-                    </a>
+                </div>
+              )}
+              {(siteConfig.socialTwitter || siteConfig.socialLinkedin || siteConfig.socialGithub) && (
+                <div>
+                  <h3 className="font-semibold mb-1">Suivez-moi aussi sur</h3>
+                  <div className="space-y-2 text-muted-foreground">
+                    {siteConfig.socialTwitter && (
+                      <div>
+                        <a href={siteConfig.socialTwitter} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                          X (Twitter)
+                        </a>
+                      </div>
+                    )}
+                    {siteConfig.socialLinkedin && (
+                      <div>
+                        <a href={siteConfig.socialLinkedin} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                          LinkedIn
+                        </a>
+                      </div>
+                    )}
+                    {siteConfig.socialGithub && (
+                      <div>
+                        <a href={siteConfig.socialGithub} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                          GitHub
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 

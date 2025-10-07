@@ -1,8 +1,10 @@
-import { profileConfig } from "@/config/profile";
-import { getArticles, getStrapiImageUrl } from "@/lib/strapi";
+import { getArticles, getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
 
 export async function GET() {
-  const articles = await getArticles();
+  const [articles, siteConfig] = await Promise.all([
+    getArticles(),
+    getSiteConfig(),
+  ]);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   const rssItems = articles
@@ -34,9 +36,9 @@ export async function GET() {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${profileConfig.blogTitle}</title>
+    <title>${siteConfig.siteName}</title>
     <link>${siteUrl}</link>
-    <description>Blog personnel - Partage de connaissances et d'expériences</description>
+    <description>${siteConfig.siteDescription || "Blog personnel - Partage de connaissances et d'expériences"}</description>
     <language>fr</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />

@@ -1,7 +1,7 @@
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { profileConfig } from "@/config/profile";
+import { getSiteConfig } from "@/lib/strapi";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -14,23 +14,34 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: profileConfig.blogTitle,
-  description: "Blog personnel",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  
+  return {
+    title: {
+      default: siteConfig.siteName,
+      template: `%s | ${siteConfig.siteName}`,
+    },
+    description: siteConfig.siteDescription || siteConfig.metaDescription,
+    keywords: siteConfig.metaKeywords?.split(',').map((k: string) => k.trim()),
+    authors: [{ name: siteConfig.profileName }],
+    metadataBase: new URL(siteConfig.siteUrl || 'http://localhost:3000'),
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteConfig = await getSiteConfig();
   return (
     <html lang="fr" suppressHydrationWarning className={dmSans.variable}>
       <head>
         <link
           rel="alternate"
           type="application/rss+xml"
-          title={`${profileConfig.blogTitle} - Flux RSS`}
+          title={`${siteConfig.siteName} - Flux RSS`}
           href="/rss.xml"
         />
         <script
@@ -48,9 +59,9 @@ export default function RootLayout({
       </head>
       <body className="flex flex-col min-h-screen font-sans">
         <ThemeProvider>
-          <Navbar />
+          <Navbar siteConfig={siteConfig} />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <Footer siteConfig={siteConfig} />
         </ThemeProvider>
       </body>
     </html>

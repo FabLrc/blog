@@ -1,7 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { profileConfig } from "@/config/profile";
+import { getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
 import { Github, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,15 +12,21 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const siteConfig = await getSiteConfig();
+  
+  // Get avatar URL from Strapi or fallback to GitHub
+  const avatarUrl = siteConfig.profileAvatar
+    ? getStrapiImageUrl(siteConfig.profileAvatar.url)
+    : `https://github.com/${siteConfig.profileUsername}.png`;
   return (
     <div className="container mx-auto px-4 py-16 max-w-3xl">
       {/* Section principale */}
       <div className="text-center mb-12">
         <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-primary/10">
           <Image
-            src={profileConfig.avatar}
-            alt={profileConfig.name}
+            src={avatarUrl}
+            alt={siteConfig.profileName}
             width={128}
             height={128}
             className="object-cover w-full h-full"
@@ -29,26 +34,32 @@ export default function AboutPage() {
           />
         </div>
         
-        <h1 className="text-4xl font-bold mb-2">{profileConfig.name}</h1>
-        <p className="text-muted-foreground text-lg mb-6">{profileConfig.title}</p>
+        <h1 className="text-4xl font-bold mb-2">{siteConfig.profileName}</h1>
+        <p className="text-muted-foreground text-lg mb-6">@{siteConfig.profileUsername}</p>
         
         {/* Liens sociaux */}
         <div className="flex justify-center gap-2 mb-8">
-          <Button variant="outline" size="icon" asChild>
-            <a href={profileConfig.social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-              <Github className="w-4 h-4" />
-            </a>
-          </Button>
-          <Button variant="outline" size="icon" asChild>
-            <a href={profileConfig.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-              <Linkedin className="w-4 h-4" />
-            </a>
-          </Button>
-          <Button variant="outline" size="icon" asChild>
-            <a href={profileConfig.social.x} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
-              <XIcon className="w-4 h-4" />
-            </a>
-          </Button>
+          {siteConfig.socialGithub && (
+            <Button variant="outline" size="icon" asChild>
+              <a href={siteConfig.socialGithub} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <Github className="w-4 h-4" />
+              </a>
+            </Button>
+          )}
+          {siteConfig.socialLinkedin && (
+            <Button variant="outline" size="icon" asChild>
+              <a href={siteConfig.socialLinkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <Linkedin className="w-4 h-4" />
+              </a>
+            </Button>
+          )}
+          {siteConfig.socialTwitter && (
+            <Button variant="outline" size="icon" asChild>
+              <a href={siteConfig.socialTwitter} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+                <XIcon className="w-4 h-4" />
+              </a>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -56,28 +67,23 @@ export default function AboutPage() {
 
       {/* Biographie */}
       <div className="prose prose-neutral dark:prose-invert max-w-none mb-12">
-        <p className="text-lg leading-relaxed text-muted-foreground">
-          {profileConfig.bio.intro}
-        </p>
-        <p className="text-lg leading-relaxed text-muted-foreground">
-          {profileConfig.bio.journey}
-        </p>
-        <p className="text-lg leading-relaxed text-muted-foreground">
-          {profileConfig.bio.personal}
+        <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">
+          {siteConfig.profileBio}
         </p>
       </div>
 
-      {/* Compétences */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-4">Compétences</h2>
-        <div className="flex flex-wrap gap-2">
-          {profileConfig.skills.map((skill) => (
-            <Badge key={skill} variant="secondary" className="text-sm">
-              {skill}
-            </Badge>
-          ))}
-        </div>
-      </div>
+      {/* Email de contact si disponible */}
+      {siteConfig.profileEmail && (
+        <>
+          <Separator className="mb-12" />
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-4">Contact</h2>
+            <p className="text-muted-foreground">
+              Email : <a href={`mailto:${siteConfig.profileEmail}`} className="text-primary hover:underline">{siteConfig.profileEmail}</a>
+            </p>
+          </div>
+        </>
+      )}
 
       <Separator className="mb-12" />
 

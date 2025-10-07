@@ -74,3 +74,36 @@ export interface StrapiResponse<T> {
     };
   };
 }
+
+// Site Configuration
+export interface StrapiSiteConfig {
+  id: number;
+  documentId: string;
+  siteName: string;
+  siteDescription: string;
+  siteUrl: string;
+  // Profile section
+  profileName: string;
+  profileUsername: string;
+  profileBio: string;
+  profileAvatar?: StrapiImage;
+  profileEmail?: string;
+  // Social links
+  socialGithub?: string;
+  socialTwitter?: string;
+  socialLinkedin?: string;
+  socialEmail?: string;
+  // SEO & Meta
+  metaDescription?: string;
+  metaKeywords?: string;
+  logo?: StrapiImage;
+  favicon?: StrapiImage;
+  // Footer
+  footerText?: string;
+  // Features
+  newsletterEnabled?: boolean;
+  commentsEnabled?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}

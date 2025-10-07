@@ -10,13 +10,17 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { profileConfig } from "@/config/profile";
+import { StrapiSiteConfig } from "@/types/strapi";
 import { Menu, Moon, Search, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Navbar() {
+interface NavbarProps {
+  siteConfig: StrapiSiteConfig;
+}
+
+export default function Navbar({ siteConfig }: NavbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -49,7 +53,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
-          {profileConfig.blogTitle}
+          {siteConfig.siteName}
         </Link>
 
         {/* Desktop Navigation */}

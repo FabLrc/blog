@@ -3,8 +3,7 @@ import { FeaturedArticle } from "@/components/featured-article";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { profileConfig } from "@/config/profile";
-import { getArticles } from "@/lib/strapi";
+import { getArticles, getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 
@@ -16,57 +15,72 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 
 export default async function Home() {
-  const articles = await getArticles(4);
+  const [articles, siteConfig] = await Promise.all([
+    getArticles(4),
+    getSiteConfig(),
+  ]);
+  
   const [featuredArticle, ...recentArticles] = articles;
+
+  // Get avatar URL from Strapi or fallback to GitHub
+  const avatarUrl = siteConfig.profileAvatar
+    ? getStrapiImageUrl(siteConfig.profileAvatar.url)
+    : `https://github.com/${siteConfig.profileUsername}.png`;
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       {/* Profile Section */}
       <div className="mb-12 text-center">
         <Avatar className="mx-auto mb-4 h-24 w-24">
-          <AvatarImage src={profileConfig.avatar} alt={profileConfig.name} />
+          <AvatarImage src={avatarUrl} alt={siteConfig.profileName} />
           <AvatarFallback>
-            {profileConfig.name.split(" ").map(n => n[0]).join("").toUpperCase()}
+            {siteConfig.profileName.split(" ").map((n: string) => n[0]).join("").toUpperCase()}
           </AvatarFallback>
         </Avatar>
         
-        <h1 className="mb-2 text-3xl font-bold">{profileConfig.name}</h1>
+        <h1 className="mb-2 text-3xl font-bold">{siteConfig.profileName}</h1>
         
         <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
-          {profileConfig.bio.intro}
+          {siteConfig.profileBio}
         </p>
 
         <div className="flex justify-center gap-2">
-          <Button variant="outline" size="icon" asChild title="GitHub">
-            <a
-              href={profileConfig.social.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-            >
-              <Github className="h-4 w-4" />
-            </a>
-          </Button>
-          <Button variant="outline" size="icon" asChild title="LinkedIn">
-            <a
-              href={profileConfig.social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="h-4 w-4" />
-            </a>
-          </Button>
-          <Button variant="outline" size="icon" asChild title="X (Twitter)">
-            <a
-              href={profileConfig.social.x}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="X (Twitter)"
-            >
-              <XIcon className="h-4 w-4" />
-            </a>
-          </Button>
+          {siteConfig.socialGithub && (
+            <Button variant="outline" size="icon" asChild title="GitHub">
+              <a
+                href={siteConfig.socialGithub}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
+                <Github className="h-4 w-4" />
+              </a>
+            </Button>
+          )}
+          {siteConfig.socialLinkedin && (
+            <Button variant="outline" size="icon" asChild title="LinkedIn">
+              <a
+                href={siteConfig.socialLinkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+            </Button>
+          )}
+          {siteConfig.socialTwitter && (
+            <Button variant="outline" size="icon" asChild title="X (Twitter)">
+              <a
+                href={siteConfig.socialTwitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X (Twitter)"
+              >
+                <XIcon className="h-4 w-4" />
+              </a>
+            </Button>
+          )}
         </div>
       </div>
 

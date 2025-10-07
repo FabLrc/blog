@@ -38,7 +38,7 @@ export function calculateReadingTime(text: string, wordsPerMinute: number = 200)
  */
 export function formatReadingTime(minutes: number): string {
   if (minutes === 1) {
-    return "1 min de lecture";
+    return "1 min";
   }
-  return `${minutes} min de lecture`;
+  return `${minutes} min`;
 }

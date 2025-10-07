@@ -153,6 +153,41 @@ export async function getCategories() {
 }
 
 /**
+ * Fetch site configuration from Strapi
+ */
+export async function getSiteConfig() {
+  try {
+    const response = await fetch(
+      `${STRAPI_API_URL}/site-config?populate=*`,
+      {
+        next: { revalidate: 3600 }, // Revalidate every hour
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`Failed to fetch site config: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to fetch site config: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Single type returns data directly, not in an array
+    return data.data || data;
+  } catch (error) {
+    console.error("Error fetching site config:", error);
+    // Return default config if fetch fails
+    return {
+      siteName: "Mon Blog",
+      siteDescription: "Un blog sur le développement web",
+      profileName: "FabLrc",
+      profileUsername: "FabLrc",
+      profileBio: "Développeur curieux qui partage ses découvertes.",
+      socialGithub: "https://github.com/FabLrc",
+    };
+  }
+}
+
+/**
  * Get the previous article (published earlier)
  */
 export async function getPreviousArticle(
@@ -212,6 +247,7 @@ export function extractTextFromBlocks(blocks: unknown[]): string {
 
   let text = '';
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   blocks.forEach((block: any) => {
     if (block.__component === 'shared.rich-text' && block.body) {
       text += block.body + ' ';
