@@ -1,6 +1,7 @@
 import { ArticleNavigation } from "@/components/article-navigation";
 import ArticleSidebar from "@/components/article-sidebar";
 import BlockRenderer from "@/components/block-renderer";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -102,9 +103,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const readingMinutes = calculateReadingTime(articleText);
   const readingTimeText = formatReadingTime(readingMinutes);
 
+  // Build breadcrumb items
+  const categories = article.categories || (article.category ? [article.category] : []);
+  const breadcrumbItems = [
+    { label: "Blog", href: "/blog" },
+    ...(categories.length > 0
+      ? [{ label: categories[0].name, href: `/blog?category=${categories[0].slug}` }]
+      : []),
+    { label: article.title },
+  ];
+
   return (
     <>
       <article className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Breadcrumb */}
+        <Breadcrumb items={breadcrumbItems} className="mb-6" />
+
         {/* Back button */}
         <Link
           href="/blog"

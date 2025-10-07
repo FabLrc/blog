@@ -1,5 +1,6 @@
 import { getArticles, getCategories } from "@/lib/strapi";
 import { BlogList } from "@/components/blog-list";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 export default async function BlogPage() {
   const [articles, categories] = await Promise.all([
@@ -10,6 +11,12 @@ export default async function BlogPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb */}
+        <Breadcrumb
+          items={[{ label: "Blog" }]}
+          className="mb-8"
+        />
+
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Blog</h1>

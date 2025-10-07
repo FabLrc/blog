@@ -1,7 +1,8 @@
 "use client";
 
 import { StrapiArticle, StrapiCategory } from "@/types/strapi";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import ArticleCard from "./article-card";
 import { CategoryFilter } from "./category-filter";
 
@@ -12,17 +13,49 @@ interface BlogListProps {
 
 export function BlogList({ initialArticles, categories }: BlogListProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Read category from URL on mount
+  useEffect(() => {
+    const categorySlug = searchParams.get("category");
+    if (categorySlug) {
+      // Find the category by slug
+      const category = categories.find((cat) => cat.slug === categorySlug);
+      if (category) {
+        setSelectedCategories([category.documentId]);
+      }
+    }
+  }, [searchParams, categories]);
 
   const handleCategoryToggle = (categoryId: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryId)
+    setSelectedCategories((prev) => {
+      const newSelection = prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
-    );
+        : [...prev, categoryId];
+      
+      // Update URL with selected categories
+      updateUrl(newSelection);
+      return newSelection;
+    });
   };
 
   const handleClearFilters = () => {
     setSelectedCategories([]);
+    // Clear URL params
+    router.push("/blog");
+  };
+
+  const updateUrl = (categoryIds: string[]) => {
+    if (categoryIds.length === 0) {
+      router.push("/blog");
+    } else {
+      // Get the first selected category's slug for URL
+      const selectedCategory = categories.find((cat) => cat.documentId === categoryIds[0]);
+      if (selectedCategory) {
+        router.push(`/blog?category=${selectedCategory.slug}`);
+      }
+    }
   };
 
   const filteredArticles = useMemo(() => {
