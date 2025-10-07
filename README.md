@@ -46,37 +46,19 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 
 ## ✨ Fonctionnalités
 
-### 📖 Contenu
-- ✅ **Configuration centralisée dans Strapi** (profil, social, images, SEO)
-- ✅ Rendu Markdown complet (GFM)
-- ✅ Table des matières avec scroll spy
-- ✅ Navigation précédent/suivant
-- ✅ Temps de lecture estimé (200 mots/min)
-- ✅ Multi-catégories par article
-- ✅ Filtres par catégorie avec URL sync
-- ✅ Ancres de partage (copie lien vers section)
-
-### 🔍 Recherche & Navigation
-- ✅ Barre de recherche avec `Ctrl+K` / `Cmd+K`
-- ✅ Résultats en temps réel
-- ✅ Navbar sticky avec backdrop blur
-- ✅ Menu hamburger responsive
-
-### 🎨 Interface
+- ✅ Configuration centralisée dans Strapi (profil, liens sociaux, images, SEO)
+- ✅ Multi-catégories par article avec filtres URL-based
+- ✅ Recherche instantanée (`Ctrl+K`) en temps réel
+- ✅ Table des matières interactive avec scroll spy
 - ✅ Mode sombre/clair avec persistance
-- ✅ Thème TweakCN (Mocha Mousse)
-- ✅ Typographie DM Sans
-- ✅ Design responsive (mobile-first)
-- ✅ Sidebar unifiée (TOC + partage social)
-
-### 🚀 SEO & Performance
-- ✅ **Fil d'Ariane** (Breadcrumb) avec Schema.org JSON-LD
-- ✅ Sitemap XML automatique (`/sitemap.xml`)
-- ✅ Flux RSS dynamique (`/rss.xml`)
-- ✅ Robots.txt
+- ✅ Breadcrumb SEO avec Schema.org JSON-LD
+- ✅ Sidebar responsive (TOC + partage social)
+- ✅ Rendu Markdown complet (GFM)
+- ✅ Navigation précédent/suivant
+- ✅ Temps de lecture estimé
+- ✅ Flux RSS & Sitemap XML
 - ✅ Open Graph & Twitter Cards
-- ✅ Balises meta dynamiques depuis Strapi
-- ✅ ISR avec revalidation (1h pour config, 1min pour articles)
+- ✅ ISR avec revalidation (1h config, 1min articles)
 
 ## 📂 Structure
 
@@ -196,43 +178,14 @@ return {
 
 ## 🎯 Roadmap
 
-- [x] Configuration centralisée dans Strapi
-- [x] Multi-catégories par article
-- [x] Filtres URL-based (deep linking)
-- [x] Breadcrumb avec Schema.org
-- [x] Sidebar responsive (desktop fixe + mobile sticky)
-- [ ] Coloration syntaxique des blocs de code
-- [ ] Système de commentaires (Giscus)
-- [ ] Newsletter fonctionnelle (intégration Mailchimp/SendGrid)
-- [ ] Analytics (Plausible/Google Analytics)
-- [ ] JSON-LD pour rich snippets articles
-
-## 🚢 Déploiement
-
-### Frontend (Vercel recommandé)
-1. Push sur GitHub
-2. Connecter à Vercel
-3. Configurer les variables d'environnement :
-   ```
-   NEXT_PUBLIC_STRAPI_URL=https://votre-strapi.com
-   NEXT_PUBLIC_SITE_URL=https://votre-blog.com
-   ```
-4. Deploy automatique sur chaque push
-
-### Backend (Strapi Cloud, Railway, ou VPS)
-1. **Strapi Cloud** : Import direct depuis GitHub
-2. **Railway** : Template Strapi disponible
-3. **VPS** : 
-   ```bash
-   npm run build
-   NODE_ENV=production npm start
-   ```
-
-### Configuration post-déploiement
-1. Créer le content-type `site-config` dans Strapi production
-2. Configurer les permissions publiques
-3. Remplir les données dans Content Manager
-4. Tester l'endpoint : `https://votre-strapi.com/api/site-config?populate=*`
+- [ ] Coloration syntaxique des blocs de code (Shiki/Prism)
+- [ ] View Transitions API
+- [ ] Optimisation des images (blur placeholder, WebP/AVIF)
+- [ ] Système de thèmes saisonniers 🎃🎄🧧 (auto-switch Halloween, Noël, Nouvel an chinois)
+- [ ] Mode Lecture immersif
+- [ ] Newsletter fonctionnelle (Resend/SendGrid)
+- [ ] Barre de progression de lecture
+- [ ] Images Open Graph dynamiques (@vercel/og)
 
 ---
 
