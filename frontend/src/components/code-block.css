@@ -1,0 +1,82 @@
+.code-block-content {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.code-block-content pre {
+  margin: 0;
+  padding: 1rem;
+  background: transparent !important;
+}
+
+.code-block-content code {
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  counter-reset: line;
+  display: block;
+}
+
+.code-block-content code .line {
+  display: block;
+  padding: 0 0;
+  min-height: 1.4em;
+  line-height: 1.4;
+}
+
+/* Hover effect - adapté au thème */
+.dark .code-block-content code .line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.code-block-content code .line:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Numéros de lignes */
+.code-block-with-numbers code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2rem;
+  margin-right: 0.75rem;
+  padding-right: 0.5rem;
+  text-align: right;
+  border-right: 1px solid rgba(128, 128, 128, 0.15);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Couleur des numéros selon le thème */
+.dark .code-block-with-numbers code .line::before {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.code-block-with-numbers code .line::before {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar personnalisée */
+.code-block-content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-block-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark .code-block-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.code-block-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.dark .code-block-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.code-block-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

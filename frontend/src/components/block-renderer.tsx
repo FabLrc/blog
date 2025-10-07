@@ -1,5 +1,6 @@
 import { HeadingWithAnchor } from "@/components/heading-with-anchor";
 import { Card, CardContent } from "@/components/ui/card";
+import { CodeBlock } from "@/components/code-block";
 import { getStrapiImageUrl } from "@/lib/strapi";
 import Image from "next/image";
 import type { Components } from "react-markdown";
@@ -40,7 +41,15 @@ interface SliderBlock extends Block {
   }>;
 }
 
-export type BlockType = RichTextBlock | QuoteBlock | MediaBlock | SliderBlock;
+interface CodeBlockType extends Block {
+  __component: "shared.code";
+  title?: string;
+  language: string;
+  code: string;
+  showLineNumbers?: boolean;
+}
+
+export type BlockType = RichTextBlock | QuoteBlock | MediaBlock | SliderBlock | CodeBlockType;
 
 interface BlockRendererProps {
   blocks: unknown[];
@@ -222,6 +231,16 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             return <Media key={block.id} file={block.file} />;
           case "shared.slider":
             return <Slider key={block.id} files={block.files} />;
+          case "shared.code":
+            return (
+              <CodeBlock
+                key={block.id}
+                code={block.code}
+                language={block.language}
+                title={block.title}
+                showLineNumbers={block.showLineNumbers}
+              />
+            );
           default:
             return null;
         }
