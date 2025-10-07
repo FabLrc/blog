@@ -2,28 +2,28 @@
 
 Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre et thème TweakCN.
 
-## � Aperçu
+## 👀 Aperçu
 
 <div align="center">
 
 ### Page d'accueil
 ![Page d'accueil](screenshots/FireShot%20Capture%20001%20-%20FabLrc%20-%20localhost.png)
 
-### Liste des articles
+### Blog
 ![Liste des articles](screenshots/FireShot%20Capture%20002%20-%20FabLrc%20-%20localhost.png)
 
-### Article avec table des matières
+### Article
 ![Article avec TOC](screenshots/FireShot%20Capture%20003%20-%20Beautiful%20picture%20-%20localhost.png)
 
-### Recherche avec Ctrl+K
+### A propos
 ![Recherche](screenshots/FireShot%20Capture%20004%20-%20FabLrc%20-%20localhost.png)
 
-### Menu mobile responsive
+### Contact
 ![Menu mobile](screenshots/FireShot%20Capture%20005%20-%20FabLrc%20-%20localhost.png)
 
 </div>
 
-## �🚀 Stack
+## 🚀 Stack
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, ShadCN UI
 - **Backend**: Strapi v5, SQLite
