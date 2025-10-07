@@ -178,11 +178,24 @@ export async function getSiteConfig() {
     // Return default config if fetch fails
     return {
       siteName: "Mon Blog",
-      siteDescription: "Un blog sur le développement web",
-      profileName: "FabLrc",
-      profileUsername: "FabLrc",
-      profileBio: "Développeur curieux qui partage ses découvertes.",
-      socialGithub: "https://github.com/FabLrc",
+      siteDescription: "Mon super blog personnel",
+      siteUrl: "http://localhost:3000",
+      profileName: "John Doe",
+      profileUsername: "johndoe",
+      profileBio: "Développeur passionné de technologie",
+      profileEmail: "contact@example.com",
+      profileAvatar: undefined,
+      socialGithub: "https://github.com",
+      socialTwitter: "https://x.com",
+      socialLinkedin: "https://linkedin.com",
+      socialEmail: "contact@example.com",
+      metaDescription: "Bienvenue sur mon blog personnel où je partage des articles sur le développement web et la technologie.",
+      metaKeywords: "développement web, tech",
+      logo: undefined,
+      favicon: undefined,
+      footerText: "Mon super blog créé avec Next.js et Strapi",
+      newsletterEnabled: true,
+      commentsEnabled: false,
     };
   }
 }
