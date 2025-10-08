@@ -40,7 +40,7 @@ export function CodeBlock({
         
         const highlighted = await codeToHtml(code, {
           lang: language,
-          theme: isDark ? 'github-dark' : 'github-light',
+          theme: isDark ? 'gruvbox-dark-soft' : 'github-light',
           transformers: [
             {
               line(node, line) {
@@ -93,9 +93,9 @@ export function CodeBlock({
   // Rendu initial côté serveur (sans highlighting)
   if (!isMounted) {
     return (
-      <div className="relative group my-6 rounded-lg overflow-hidden border border-border dark:bg-[#0d1117] bg-[#f6f8fa]">
+      <div className="relative group my-6 rounded-lg overflow-hidden border border-border dark:bg-[#282c34] bg-[#f6f8fa]">
         {(title || true) && (
-          <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50 border-b border-border">
+          <div className="flex items-center justify-between px-4 py-2.5 dark:bg-[#21252b] bg-muted/50 border-b border-border">
             {title && (
               <span className="text-sm font-medium text-foreground">
                 {title}
@@ -109,7 +109,7 @@ export function CodeBlock({
           </div>
         )}
         <div className="relative">
-          <pre className="p-5 overflow-x-auto">
+          <pre className="p-4 overflow-x-auto">
             <code className="text-sm font-mono leading-relaxed">{code}</code>
           </pre>
         </div>
@@ -118,17 +118,17 @@ export function CodeBlock({
   }
 
   return (
-    <div className="relative group my-6 rounded-lg overflow-hidden border border-border dark:bg-[#0d1117] bg-[#f6f8fa] shadow-sm hover:shadow-md transition-shadow">
+    <div className="relative group my-6 rounded-lg overflow-hidden border border-border dark:bg-[#282c34] bg-[#f6f8fa] dark:border-[#3e4451] shadow-sm hover:shadow-md transition-shadow">
       {/* Header avec titre et bouton copier */}
       {(title || true) && (
-        <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50 border-b border-border backdrop-blur-sm">
+        <div className="flex items-center justify-between px-4 py-2.5 dark:bg-[#21252b] bg-muted/50 border-b dark:border-[#3e4451] border-border backdrop-blur-sm">
           {title && (
             <span className="text-sm font-medium text-foreground">
               {title}
             </span>
           )}
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-muted-foreground uppercase font-mono font-semibold tracking-wide">
+            <span className="text-xs dark:text-[#abb2bf] text-muted-foreground uppercase font-mono font-semibold tracking-wide">
               {language}
             </span>
             <Button
