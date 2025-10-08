@@ -1,0 +1,72 @@
+version: '3.8'
+
+# Configuration Docker Compose pour DÉVELOPPEMENT
+# Avec volumes montés pour le hot-reload
+
+services:
+  # Backend Strapi
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder  # Utilise le stage builder pour avoir les devDependencies
+    container_name: blog-backend-dev
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 1337
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: .tmp/data.db
+      PUBLIC_URL: ${PUBLIC_STRAPI_URL:-http://localhost:1337}
+      
+    volumes:
+      # Mount du code source pour hot-reload
+      - ./backend:/app
+      # Exclusion de node_modules (utilise celui du conteneur)
+      - /app/node_modules
+      # Persistance des données
+      - ./backend/.tmp:/app/.tmp
+      - ./backend/public/uploads:/app/public/uploads
+      - ./backend/data:/app/data
+    networks:
+      - blog-network
+    command: npm run develop  # Mode développement avec watch
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: deps  # Utilise le stage deps pour avoir toutes les dépendances
+    container_name: blog-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL:-http://localhost:1337}
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    volumes:
+      # Mount du code source pour hot-reload
+      - ./frontend:/app
+      # Exclusion de node_modules et .next (utilise ceux du conteneur)
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - blog-network
+    command: npm run dev  # Mode développement avec Turbopack
+
+networks:
+  blog-network:
+    driver: bridge

@@ -31,3 +31,13 @@ node_modules/
 *.db
 *.sqlite
 *.sqlite3
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Data persistence (Docker volumes locaux)
+backend/.tmp/
+backend/data/data.json
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep

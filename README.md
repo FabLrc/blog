@@ -27,7 +27,8 @@ Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre, 
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, ShadCN UI
 - **Backend**: Strapi v5, SQLite
-- **Autres**: React Markdown (GFM), DM Sans, Lucide Icons
+- **Infrastructure**: Docker, Docker Compose, GitHub Actions
+- **Autres**: React Markdown (GFM), Shiki, DM Sans, Lucide Icons
 
 ## 🏁 Démarrage
 
@@ -43,6 +44,25 @@ cd frontend && npm install && npm run dev
 ```
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 ```
+
+### 🐳 Avec Docker (Recommandé)
+
+```bash
+# Installation rapide avec le script
+.\install.ps1  # Windows
+# ou
+make install   # Linux/Mac
+
+# Ou manuellement
+docker compose up -d --build
+```
+
+**URLs** :
+- Frontend : http://localhost:3000
+- Backend : http://localhost:1337
+- Admin : http://localhost:1337/admin
+
+📖 **Documentation complète** : Voir [`DEPLOYMENT.md`](DEPLOYMENT.md) | Windows : [`WINDOWS.md`](WINDOWS.md)
 
 ## ✨ Fonctionnalités
 
@@ -176,9 +196,178 @@ return {
 - `Entrée` - Sélectionner un résultat
 - `Échap` - Fermer la recherche
 
+## 🐳 Déploiement avec Docker
+
+### 🚀 Build et exécution en local
+
+**Prérequis** : Docker et Docker Compose installés
+
+1. **Cloner le repository** :
+```bash
+git clone https://github.com/FabLrc/blog.git
+cd blog
+```
+
+2. **Configurer les variables d'environnement** :
+```bash
+# Copier le fichier exemple
+cp .env.example .env
+
+# Générer des secrets sécurisés pour Strapi
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+# Éditer .env et remplacer les valeurs par défaut
+```
+
+3. **Lancer les conteneurs** :
+```bash
+# Build et démarrage
+docker compose up -d
+
+# Voir les logs
+docker compose logs -f
+
+# Arrêter les conteneurs
+docker compose down
+
+# Arrêter et supprimer les volumes (⚠️ supprime la BDD)
+docker compose down -v
+```
+
+4. **Accéder à l'application** :
+   - **Frontend** : http://localhost:3000
+   - **Backend Strapi** : http://localhost:1337
+   - **Admin Strapi** : http://localhost:1337/admin
+
+### 📦 Images Docker
+
+Les images sont automatiquement buildées et publiées sur **GitHub Container Registry** via GitHub Actions à chaque push sur `main`.
+
+**Pull les images** :
+```bash
+# Backend
+docker pull ghcr.io/fablrc/blog-backend:latest
+
+# Frontend
+docker pull ghcr.io/fablrc/blog-frontend:latest
+```
+
+### ⚙️ Configuration pour production
+
+**Variables d'environnement importantes** :
+
+| Variable | Description | Exemple |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_STRAPI_URL` | URL publique de l'API Strapi | `https://api.votredomaine.com` |
+| `PUBLIC_STRAPI_URL` | URL du backend Strapi | `https://api.votredomaine.com` |
+| `APP_KEYS` | Secrets Strapi (4 clés séparées par virgule) | Générer avec crypto |
+| `JWT_SECRET` | Secret JWT pour Strapi | Générer avec crypto |
+
+**Générer des secrets sécurisés** :
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+### 🚢 Déploiement en production
+
+#### Option 1 : GitHub Actions automatique
+
+Les images Docker sont automatiquement buildées et publiées à chaque push sur `main`. 
+
+**Configuration nécessaire** :
+- Les images sont publiques sur `ghcr.io/fablrc/blog-*`
+- Pour déploiement automatique : ajouter les secrets GitHub (voir `.github/workflows/docker-build.yml`)
+
+#### Option 2 : Serveur VPS/Dédié
+
+Sur votre serveur :
+
+```bash
+# 1. Installer Docker et Docker Compose
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# 2. Cloner le repository
+git clone https://github.com/FabLrc/blog.git
+cd blog
+
+# 3. Configurer .env avec vos valeurs de production
+cp .env.example .env
+nano .env
+
+# 4. Lancer avec les images pré-buildées
+docker compose pull
+docker compose up -d
+
+# 5. Configurer un reverse proxy (Nginx/Caddy)
+```
+
+#### Option 3 : Plateformes Cloud
+
+**Railway** :
+```bash
+railway up
+```
+
+**Fly.io** :
+```bash
+fly launch
+fly deploy
+```
+
+**Render, DigitalOcean App Platform, AWS ECS, etc.** :
+- Pointer vers les Dockerfiles
+- Configurer les variables d'environnement
+- Déployer
+
+### 🔒 Sécurité
+
+**En production, pensez à** :
+- ✅ Générer des secrets uniques (ne jamais utiliser les exemples)
+- ✅ Utiliser HTTPS (certificat SSL/TLS)
+- ✅ Configurer un reverse proxy (Nginx, Caddy, Traefik)
+- ✅ Sauvegarder régulièrement la base de données et les uploads
+- ✅ Restreindre l'accès à l'admin Strapi (whitelist IP)
+- ✅ Utiliser une base de données externe en production (PostgreSQL recommandé)
+- ✅ Configurer les CORS correctement dans Strapi
+
+### 📁 Persistance des données
+
+Docker Compose utilise des volumes pour persister :
+- **Base de données SQLite** : `./backend/.tmp/`
+- **Uploads Strapi** : `./backend/public/uploads/`
+- **Data** : `./backend/data/`
+
+**⚠️ En production PostgreSQL** : Utiliser une base externe pour la scalabilité.
+
+### 🧪 Build manuel des images
+
+Si vous voulez builder les images localement :
+
+```bash
+# Backend
+docker build -t blog-backend ./backend
+
+# Frontend
+docker build -t blog-frontend \
+  --build-arg NEXT_PUBLIC_STRAPI_URL=http://localhost:1337 \
+  ./frontend
+```
+
+## 📚 Documentation complète
+
+| Document | Description |
+|----------|-------------|
+| **[DEPLOYMENT.md](DEPLOYMENT.md)** | 🚀 Guide de déploiement complet (local, VPS, cloud) |
+| **[DOCKER_SETUP.md](DOCKER_SETUP.md)** | 🐳 Architecture Docker détaillée et configuration |
+| **[WINDOWS.md](WINDOWS.md)** | 🪟 Guide spécifique Windows/PowerShell |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | 🤝 Guide de contribution et conventions |
+| **[STRAPI_SITE_CONFIG.md](STRAPI_SITE_CONFIG.md)** | ⚙️ Configuration du content-type site-config |
+
 ## 🎯 Roadmap
 
-- [ ] Coloration syntaxique des blocs de code (Shiki/Prism)
+- [x] Coloration syntaxique des blocs de code avec Shiki
+- [x] Dockerisation complète avec CI/CD automatique
 - [ ] View Transitions API
 - [ ] Optimisation des images (blur placeholder, WebP/AVIF)
 - [ ] Système de thèmes saisonniers 🎃🎄🧧 (auto-switch Halloween, Noël, Nouvel an chinois)

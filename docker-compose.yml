@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Backend Strapi
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blog-backend
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      # Configuration Strapi
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 1337
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      
+      # Configuration Base de données SQLite
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: .tmp/data.db
+      
+      # URL publique
+      PUBLIC_URL: ${PUBLIC_STRAPI_URL:-http://localhost:1337}
+      
+    volumes:
+      # Persistance de la base de données SQLite
+      - ./backend/.tmp:/app/.tmp
+      # Persistance des uploads
+      - ./backend/public/uploads:/app/public/uploads
+      # Persistance des données
+      - ./backend/data:/app/data
+    networks:
+      - blog-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL:-http://localhost:1337}
+    container_name: blog-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL:-http://backend:1337}
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - blog-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  blog-network:
+    driver: bridge
+
+volumes:
+  strapi_data:
+  strapi_uploads:
