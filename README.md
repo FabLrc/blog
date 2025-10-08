@@ -1,25 +1,13 @@
 # 📝 Blog Full-Stack
 
-Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre, thème TweakCN et **configuration centralisée dans Strapi CMS**.
+Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre et **configuration centralisée dans Strapi CMS**.
 
 ## 👀 Aperçu
 
 <div align="center">
 
-### Page d'accueil
 ![Page d'accueil](screenshots/FireShot%20Capture%20001%20-%20FabLrc%20-%20localhost.png)
-
-### Blog
-![Liste des articles](screenshots/FireShot%20Capture%20002%20-%20FabLrc%20-%20localhost.png)
-
-### Article
 ![Article avec TOC](screenshots/FireShot%20Capture%20003%20-%20Beautiful%20picture%20-%20localhost.png)
-
-### A propos
-![Recherche](screenshots/FireShot%20Capture%20004%20-%20FabLrc%20-%20localhost.png)
-
-### Contact
-![Menu mobile](screenshots/FireShot%20Capture%20005%20-%20FabLrc%20-%20localhost.png)
 
 </div>
 
@@ -32,41 +20,27 @@ Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre, 
 
 ## 🏁 Démarrage
 
+### 🐳 Docker (Recommandé)
+
+```bash
+cp .env.example .env
+node scripts/generate-secrets.js  # Copier les secrets dans .env
+docker compose up -d --build
+```
+
+**URLs** : Frontend [localhost:3000](http://localhost:3000) | Backend [localhost:1337](http://localhost:1337) | Admin [localhost:1337/admin](http://localhost:1337/admin)
+
+### 📦 Installation manuelle
+
 ```bash
 # Backend
-cd backend && npm install && npm run develop
+cd backend && yarn && yarn dev
 
-# Frontend
-cd frontend && npm install && npm run dev
+# Frontend  
+cd frontend && yarn && yarn dev
 ```
 
-**Variables d'environnement**: Créer `frontend/.env.local`:
-```
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
-```
-
-### 🐳 Avec Docker (Recommandé)
-
-**Installation rapide** :
-```bash
-# 1. Copier le fichier d'environnement
-cp .env.example .env
-
-# 2. Générer des secrets sécurisés
-node scripts/generate-secrets.js
-# Copier les secrets générés dans .env
-
-# 3. Lancer les conteneurs
-docker compose up -d --build
-
-# 4. (Optionnel) Importer les données de démonstration
-docker compose exec backend npm run seed:example
-```
-
-**URLs** :
-- Frontend : http://localhost:3000
-- Backend : http://localhost:1337
-- Admin : http://localhost:1337/admin
+Variables d'environnement : Créer `frontend/.env.local` avec `NEXT_PUBLIC_STRAPI_URL=http://localhost:1337`
 
 ## ✨ Fonctionnalités
 
@@ -84,231 +58,54 @@ docker compose exec backend npm run seed:example
 - ✅ Open Graph & Twitter Cards
 - ✅ ISR avec revalidation (1h config, 1min articles)
 
-## 📂 Structure
+## 📂 Structure & Configuration
 
 ```
 blog/
-├── backend/                 # Strapi CMS
-│   ├── src/api/            # Content types (articles, categories, authors)
-│   ├── config/             # Configuration Strapi
-│   └── data/               # Data seed
-│
-└── frontend/               # Next.js App
-    └── src/
-        ├── app/            # Routes (App Router)
-        │   ├── layout.tsx          # Layout global + metadata
-        │   ├── page.tsx            # Homepage (profil)
-        │   ├── blog/               # Liste + articles
-        │   ├── about/              # À propos
-        │   ├── contact/            # Contact
-        │   ├── rss.xml/            # Flux RSS
-        │   └── sitemap.xml/        # Sitemap
-        │
-        ├── components/     # Composants React
-        │   ├── navbar.tsx          # Navigation principale
-        │   ├── footer.tsx          # Footer
-        │   ├── breadcrumb.tsx      # Fil d'Ariane + Schema.org
-        │   ├── blog-list.tsx       # Liste avec filtres
-        │   ├── article-sidebar.tsx # TOC + Partage
-        │   ├── contact-form.tsx    # Formulaire contact
-        │   └── ui/                 # ShadCN components
-        │
-        ├── lib/            # Utils
-        │   ├── strapi.ts           # API Strapi + getSiteConfig()
-        │   └── utils.ts            # Helpers
-        │
-        └── types/          # TypeScript
-            └── strapi.ts           # Interfaces Strapi
+├── backend/           # Strapi CMS
+│   ├── src/api/      # Content types (articles, categories, authors)  
+│   └── config/       # Configuration Strapi
+├── frontend/         # Next.js App
+│   ├── src/app/      # Routes (layout, pages, api)
+│   ├── components/   # Composants React + ShadCN UI
+│   └── lib/         # Utils & API Strapi
 ```
 
-## 🏗️ Architecture
+### ⚙️ Configuration Strapi
 
-### Configuration centralisée
-- **Toutes les données du site** sont gérées dans Strapi (Single Type `site-config`)
-- Le frontend récupère la config via `getSiteConfig()` avec cache 1h
-- Fallback automatique si Strapi indisponible
+Configuration centralisée via Strapi CMS (Single Type `site-config`) :
+- Profil, liens sociaux, SEO, images
+- Voir [`STRAPI_SITE_CONFIG.md`](STRAPI_SITE_CONFIG.md) pour les détails
 
-### Pattern Server/Client Components
-- **Server Components** : Fetch les données (pages, layout)
-- **Client Components** : Interactivité (filtres, recherche, formulaires)
-- Config passée via props depuis serveur vers client
+**APIs** : `/api/articles` • `/api/categories` • `/api/site-config` • `/admin`
 
-### Flux de données
-```
-Strapi Admin → site-config → API → getSiteConfig() → Server Components → Props → Client Components
-```
-
-## ⚙️ Configuration
-
-### 🎛️ Configuration du site (Strapi CMS)
-Toute la configuration du site est gérée via Strapi :
-
-1. **Créer le content-type `site-config`** dans Strapi (Single Type)
-2. **Configurer les champs** (voir `STRAPI_SITE_CONFIG.md`)
-3. **Activer les permissions** : Settings → Users & Permissions → Public → site-config (find ✓)
-4. **Remplir les données** : Content Manager → Site Config
-
-**Champs disponibles** :
-- Informations du site (nom, description, URL)
-- Profil (nom, username, bio, email, avatar)
-- Liens sociaux (GitHub, Twitter, LinkedIn, email)
-- SEO (meta description, keywords)
-- Images (logo, favicon)
-- Options (newsletter, commentaires)
-- Textes (footer, copyright)
-
-Voir la **documentation complète** : [`STRAPI_SITE_CONFIG.md`](STRAPI_SITE_CONFIG.md)
-
-### 🎨 Thème visuel
-- **Couleurs et design** : `frontend/src/app/globals.css`
-- **Données démo** : `cd backend && npm run seed:example`
-
-## 🎨 Personnalisation
-
-### Changer le titre du blog
-Via **Strapi Admin** → Content Manager → Site Config → `siteName`
-
-Ou temporairement dans le code (`frontend/src/lib/strapi.ts`) :
-```typescript
-// Valeurs par défaut si Strapi n'est pas disponible
-return {
-  siteName: "Mon Super Blog",
-  // ...
-}
-```
-
-### URLs importantes
-- `/` - Page d'accueil (profil social)
-- `/blog` - Liste des articles avec filtres
-- `/blog?category=slug` - Articles filtrés par catégorie
-- `/blog/[slug]` - Article individuel avec TOC et partage
-- `/about` - À propos
-- `/contact` - Contact (formulaire + liens sociaux)
-- `/rss.xml` - Flux RSS dynamique
-- `/sitemap.xml` - Sitemap SEO
-- `/robots.txt` - Instructions robots
-
-### API Strapi
-- `http://localhost:1337/api/articles` - Articles
-- `http://localhost:1337/api/categories` - Catégories
-- `http://localhost:1337/api/site-config` - Configuration du site
-- `http://localhost:1337/admin` - Panel d'administration
-
-### Raccourcis clavier
-- `Ctrl+K` / `Cmd+K` - Ouvrir la recherche
-- `↑` / `↓` - Navigation dans les résultats
-- `Entrée` - Sélectionner un résultat
-- `Échap` - Fermer la recherche
+**Raccourcis** : `Ctrl+K` recherche • `↑/↓` navigation • `Entrée` sélection
 
 ## 🐳 Docker
 
-### 🚀 Démarrage rapide
-
+### ⚡ Démarrage rapide
 ```bash
-# 1. Configuration
 cp .env.example .env
 node scripts/generate-secrets.js  # Copier les secrets dans .env
-
-# 2. Lancement
 docker compose up -d --build
-
-# 3. Accès
-# Frontend: http://localhost:3000
-# Backend:  http://localhost:1337
-# Admin:    http://localhost:1337/admin
 ```
 
-### 🔧 Configurations disponibles
+### 🔧 Configurations
+- `docker-compose.yml` - Production locale (build sources)
+- `docker-compose.dev.yml` - Développement (hot-reload)  
+- `docker-compose.prod.yml` - Production (images GitHub)
 
-| Fichier | Usage | Description |
-|---------|-------|-------------|
-| `docker-compose.yml` | **Production locale** | Build depuis les sources |
-| `docker-compose.dev.yml` | **Développement** | Hot-reload activé |
-| `docker-compose.prod.yml` | **Production distante** | Images pré-buildées |
-
-**Développement avec hot-reload** :
+### 📦 Production
 ```bash
-docker compose -f docker-compose.dev.yml up -d
-```
-
-**Production avec images GitHub** :
-```bash
-docker compose -f docker-compose.prod.yml pull
+# VPS/Serveur dédié
+git clone https://github.com/FabLrc/blog.git && cd blog
+cp .env.example .env  # Éditer avec vos valeurs
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-### 📦 Images Docker
+**Images** : `ghcr.io/fablrc/blog-backend:latest` • `ghcr.io/fablrc/blog-frontend:latest`
 
-Images automatiquement buildées sur GitHub Registry :
-- `ghcr.io/fablrc/blog-backend:latest`
-- `ghcr.io/fablrc/blog-frontend:latest`
-
-### 🛠️ Commandes utiles
-
-```bash
-# Logs en temps réel
-docker compose logs -f
-
-# Redémarrer un service
-docker compose restart backend
-
-# Rebuild après modification
-docker compose up -d --no-deps --build backend
-
-# Nettoyer (⚠️ supprime les données)
-docker compose down -v
-
-# Sauvegarder la base de données
-docker compose exec backend tar czf - .tmp/data.db > backup-$(date +%Y%m%d).tar.gz
-```
-
-### � Variables d'environnement
-
-**Configuration minimale** (`.env`) :
-```bash
-# Secrets Strapi (générer avec le script)
-APP_KEYS=clé1,clé2,clé3,clé4
-API_TOKEN_SALT=votre-salt
-ADMIN_JWT_SECRET=votre-secret
-TRANSFER_TOKEN_SALT=votre-salt
-JWT_SECRET=votre-jwt
-
-# URLs (adapter en production)
-PUBLIC_STRAPI_URL=http://localhost:1337
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
-```
-
-### 🚢 Déploiement production
-
-**VPS/Serveur dédié** :
-```bash
-git clone https://github.com/FabLrc/blog.git
-cd blog
-cp .env.example .env
-# Éditer .env avec vos valeurs de production
-docker compose -f docker-compose.prod.yml up -d
-```
-
-**Sécurité production** :
-- ✅ Secrets uniques (jamais les exemples)
-- ✅ HTTPS avec reverse proxy (Nginx/Caddy)
-- ✅ Base externe PostgreSQL (remplacer SQLite)
-- ✅ Sauvegardes automatiques
-- ✅ Restriction accès admin Strapi
-
-### 📁 Persistance
-
-Volumes Docker persistés :
-- `backend/.tmp/` → Base de données SQLite
-- `backend/public/uploads/` → Fichiers uploadés
-- `backend/data/` → Données seed
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | 🤝 Guide de contribution et conventions |
-| **[STRAPI_SITE_CONFIG.md](STRAPI_SITE_CONFIG.md)** | ⚙️ Configuration du content-type site-config |
+**Sécurité** : Secrets uniques • HTTPS • PostgreSQL • Sauvegardes • Accès admin restreint
 
 ## 🎯 Roadmap
 
