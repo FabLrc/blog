@@ -129,7 +129,7 @@ Write-Host "   docker compose ps                # État des conteneurs"
 Write-Host "   docker compose restart           # Redémarrer les services"
 Write-Host "   docker compose down              # Arrêter les conteneurs"
 Write-Host ""
-Write-Host "   Voir WINDOWS.md pour plus de commandes PowerShell"
+Write-Host "   Voir README.md section Docker pour plus de commandes"
 Write-Host ""
 
 Write-Host "🎉 Bon développement !" -ForegroundColor Green

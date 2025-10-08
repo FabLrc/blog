@@ -30,7 +30,7 @@
 
 - [ ] Le code suit les conventions du projet
 - [ ] Les commentaires sont à jour
-- [ ] La documentation est à jour (README, DEPLOYMENT.md, etc.)
+- [ ] La documentation est à jour (README, CONTRIBUTING.md, etc.)
 - [ ] Les images Docker se buildent correctement
 - [ ] Les tests passent
 - [ ] Pas de console.log oubliés

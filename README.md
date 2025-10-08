@@ -47,22 +47,26 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 
 ### 🐳 Avec Docker (Recommandé)
 
+**Installation rapide** :
 ```bash
-# Installation rapide avec le script
-.\install.ps1  # Windows
-# ou
-make install   # Linux/Mac
+# 1. Copier le fichier d'environnement
+cp .env.example .env
 
-# Ou manuellement
+# 2. Générer des secrets sécurisés
+node scripts/generate-secrets.js
+# Copier les secrets générés dans .env
+
+# 3. Lancer les conteneurs
 docker compose up -d --build
+
+# 4. (Optionnel) Importer les données de démonstration
+docker compose exec backend npm run seed:example
 ```
 
 **URLs** :
 - Frontend : http://localhost:3000
 - Backend : http://localhost:1337
 - Admin : http://localhost:1337/admin
-
-📖 **Documentation complète** : Voir [`DEPLOYMENT.md`](DEPLOYMENT.md) | Windows : [`WINDOWS.md`](WINDOWS.md)
 
 ## ✨ Fonctionnalités
 
@@ -196,171 +200,113 @@ return {
 - `Entrée` - Sélectionner un résultat
 - `Échap` - Fermer la recherche
 
-## 🐳 Déploiement avec Docker
+## 🐳 Docker
 
-### 🚀 Build et exécution en local
+### 🚀 Démarrage rapide
 
-**Prérequis** : Docker et Docker Compose installés
-
-1. **Cloner le repository** :
 ```bash
-git clone https://github.com/FabLrc/blog.git
-cd blog
-```
-
-2. **Configurer les variables d'environnement** :
-```bash
-# Copier le fichier exemple
+# 1. Configuration
 cp .env.example .env
+node scripts/generate-secrets.js  # Copier les secrets dans .env
 
-# Générer des secrets sécurisés pour Strapi
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# 2. Lancement
+docker compose up -d --build
 
-# Éditer .env et remplacer les valeurs par défaut
+# 3. Accès
+# Frontend: http://localhost:3000
+# Backend:  http://localhost:1337
+# Admin:    http://localhost:1337/admin
 ```
 
-3. **Lancer les conteneurs** :
+### 🔧 Configurations disponibles
+
+| Fichier | Usage | Description |
+|---------|-------|-------------|
+| `docker-compose.yml` | **Production locale** | Build depuis les sources |
+| `docker-compose.dev.yml` | **Développement** | Hot-reload activé |
+| `docker-compose.prod.yml` | **Production distante** | Images pré-buildées |
+
+**Développement avec hot-reload** :
 ```bash
-# Build et démarrage
-docker compose up -d
-
-# Voir les logs
-docker compose logs -f
-
-# Arrêter les conteneurs
-docker compose down
-
-# Arrêter et supprimer les volumes (⚠️ supprime la BDD)
-docker compose down -v
+docker compose -f docker-compose.dev.yml up -d
 ```
 
-4. **Accéder à l'application** :
-   - **Frontend** : http://localhost:3000
-   - **Backend Strapi** : http://localhost:1337
-   - **Admin Strapi** : http://localhost:1337/admin
+**Production avec images GitHub** :
+```bash
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+```
 
 ### 📦 Images Docker
 
-Les images sont automatiquement buildées et publiées sur **GitHub Container Registry** via GitHub Actions à chaque push sur `main`.
+Images automatiquement buildées sur GitHub Registry :
+- `ghcr.io/fablrc/blog-backend:latest`
+- `ghcr.io/fablrc/blog-frontend:latest`
 
-**Pull les images** :
+### 🛠️ Commandes utiles
+
 ```bash
-# Backend
-docker pull ghcr.io/fablrc/blog-backend:latest
+# Logs en temps réel
+docker compose logs -f
 
-# Frontend
-docker pull ghcr.io/fablrc/blog-frontend:latest
+# Redémarrer un service
+docker compose restart backend
+
+# Rebuild après modification
+docker compose up -d --no-deps --build backend
+
+# Nettoyer (⚠️ supprime les données)
+docker compose down -v
+
+# Sauvegarder la base de données
+docker compose exec backend tar czf - .tmp/data.db > backup-$(date +%Y%m%d).tar.gz
 ```
 
-### ⚙️ Configuration pour production
+### � Variables d'environnement
 
-**Variables d'environnement importantes** :
-
-| Variable | Description | Exemple |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_STRAPI_URL` | URL publique de l'API Strapi | `https://api.votredomaine.com` |
-| `PUBLIC_STRAPI_URL` | URL du backend Strapi | `https://api.votredomaine.com` |
-| `APP_KEYS` | Secrets Strapi (4 clés séparées par virgule) | Générer avec crypto |
-| `JWT_SECRET` | Secret JWT pour Strapi | Générer avec crypto |
-
-**Générer des secrets sécurisés** :
+**Configuration minimale** (`.env`) :
 ```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# Secrets Strapi (générer avec le script)
+APP_KEYS=clé1,clé2,clé3,clé4
+API_TOKEN_SALT=votre-salt
+ADMIN_JWT_SECRET=votre-secret
+TRANSFER_TOKEN_SALT=votre-salt
+JWT_SECRET=votre-jwt
+
+# URLs (adapter en production)
+PUBLIC_STRAPI_URL=http://localhost:1337
+NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 ```
 
-### 🚢 Déploiement en production
+### 🚢 Déploiement production
 
-#### Option 1 : GitHub Actions automatique
-
-Les images Docker sont automatiquement buildées et publiées à chaque push sur `main`. 
-
-**Configuration nécessaire** :
-- Les images sont publiques sur `ghcr.io/fablrc/blog-*`
-- Pour déploiement automatique : ajouter les secrets GitHub (voir `.github/workflows/docker-build.yml`)
-
-#### Option 2 : Serveur VPS/Dédié
-
-Sur votre serveur :
-
+**VPS/Serveur dédié** :
 ```bash
-# 1. Installer Docker et Docker Compose
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-
-# 2. Cloner le repository
 git clone https://github.com/FabLrc/blog.git
 cd blog
-
-# 3. Configurer .env avec vos valeurs de production
 cp .env.example .env
-nano .env
-
-# 4. Lancer avec les images pré-buildées
-docker compose pull
-docker compose up -d
-
-# 5. Configurer un reverse proxy (Nginx/Caddy)
+# Éditer .env avec vos valeurs de production
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-#### Option 3 : Plateformes Cloud
+**Sécurité production** :
+- ✅ Secrets uniques (jamais les exemples)
+- ✅ HTTPS avec reverse proxy (Nginx/Caddy)
+- ✅ Base externe PostgreSQL (remplacer SQLite)
+- ✅ Sauvegardes automatiques
+- ✅ Restriction accès admin Strapi
 
-**Railway** :
-```bash
-railway up
-```
+### 📁 Persistance
 
-**Fly.io** :
-```bash
-fly launch
-fly deploy
-```
+Volumes Docker persistés :
+- `backend/.tmp/` → Base de données SQLite
+- `backend/public/uploads/` → Fichiers uploadés
+- `backend/data/` → Données seed
 
-**Render, DigitalOcean App Platform, AWS ECS, etc.** :
-- Pointer vers les Dockerfiles
-- Configurer les variables d'environnement
-- Déployer
-
-### 🔒 Sécurité
-
-**En production, pensez à** :
-- ✅ Générer des secrets uniques (ne jamais utiliser les exemples)
-- ✅ Utiliser HTTPS (certificat SSL/TLS)
-- ✅ Configurer un reverse proxy (Nginx, Caddy, Traefik)
-- ✅ Sauvegarder régulièrement la base de données et les uploads
-- ✅ Restreindre l'accès à l'admin Strapi (whitelist IP)
-- ✅ Utiliser une base de données externe en production (PostgreSQL recommandé)
-- ✅ Configurer les CORS correctement dans Strapi
-
-### 📁 Persistance des données
-
-Docker Compose utilise des volumes pour persister :
-- **Base de données SQLite** : `./backend/.tmp/`
-- **Uploads Strapi** : `./backend/public/uploads/`
-- **Data** : `./backend/data/`
-
-**⚠️ En production PostgreSQL** : Utiliser une base externe pour la scalabilité.
-
-### 🧪 Build manuel des images
-
-Si vous voulez builder les images localement :
-
-```bash
-# Backend
-docker build -t blog-backend ./backend
-
-# Frontend
-docker build -t blog-frontend \
-  --build-arg NEXT_PUBLIC_STRAPI_URL=http://localhost:1337 \
-  ./frontend
-```
-
-## 📚 Documentation complète
+## 📚 Documentation
 
 | Document | Description |
 |----------|-------------|
-| **[DEPLOYMENT.md](DEPLOYMENT.md)** | 🚀 Guide de déploiement complet (local, VPS, cloud) |
-| **[DOCKER_SETUP.md](DOCKER_SETUP.md)** | 🐳 Architecture Docker détaillée et configuration |
-| **[WINDOWS.md](WINDOWS.md)** | 🪟 Guide spécifique Windows/PowerShell |
 | **[CONTRIBUTING.md](CONTRIBUTING.md)** | 🤝 Guide de contribution et conventions |
 | **[STRAPI_SITE_CONFIG.md](STRAPI_SITE_CONFIG.md)** | ⚙️ Configuration du content-type site-config |
 
