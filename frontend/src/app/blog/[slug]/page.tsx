@@ -1,6 +1,7 @@
 import { ArticleNavigation } from "@/components/article-navigation";
 import ArticleSidebar from "@/components/article-sidebar";
 import BlockRenderer from "@/components/block-renderer";
+import ReadingProgress from "@/components/reading-progress";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +119,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <article className="container mx-auto px-4 py-8 max-w-4xl">
+        <ReadingProgress />
         {/* Breadcrumb */}
         <Breadcrumb items={breadcrumbItems} className="mb-6" />
 

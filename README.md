@@ -59,6 +59,8 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 - ✅ Flux RSS & Sitemap XML
 - ✅ Open Graph & Twitter Cards
 - ✅ ISR avec revalidation (1h config, 1min articles)
+- ✅ Coloration syntaxique des blocs de code (Shiki/Prism)
+- ✅ Barre de progression de lecture
 
 ## 📂 Structure
 
@@ -178,13 +180,11 @@ return {
 
 ## 🎯 Roadmap
 
-- [ ] Coloration syntaxique des blocs de code (Shiki/Prism)
 - [ ] View Transitions API
 - [ ] Optimisation des images (blur placeholder, WebP/AVIF)
 - [ ] Système de thèmes saisonniers 🎃🎄🧧 (auto-switch Halloween, Noël, Nouvel an chinois)
 - [ ] Mode Lecture immersif
 - [ ] Newsletter fonctionnelle (Resend/SendGrid)
-- [ ] Barre de progression de lecture
 - [ ] Images Open Graph dynamiques (@vercel/og)
 
 ---
