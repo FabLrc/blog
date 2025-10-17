@@ -39,9 +39,22 @@ cd backend && npm install && npm run develop
 cd frontend && npm install && npm run dev
 ```
 
-**Variables d'environnement**: Créer `frontend/.env.local`:
+**Variables d'environnement**: 
+
+Créer `frontend/.env.local`:
 ```
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+```
+Créer `backend/.env.local`:
+```
+HOST=0.0.0.0
+PORT=1337
+APP_KEYS="toBeModified1,toBeModified2"
+API_TOKEN_SALT=tobemodified
+ADMIN_JWT_SECRET=tobemodified
+TRANSFER_TOKEN_SALT=tobemodified
+JWT_SECRET=tobemodified
+ENCRYPTION_KEY=tobemodified
 ```
 
 ## ✨ Fonctionnalités
