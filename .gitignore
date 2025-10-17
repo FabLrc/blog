@@ -31,3 +31,8 @@ node_modules/
 *.db
 *.sqlite
 *.sqlite3
+
+# Lock files (si vous utilisez un gestionnaire de paquets différent)
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
