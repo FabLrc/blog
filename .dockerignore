@@ -1,0 +1,23 @@
+# Ignore node modules and local artifacts
+**/node_modules
+node_modules
+
+# Local env
+.env
+.env.*
+
+# Next build output
+frontend/.next
+
+# Strapi tmp and build
+backend/.tmp
+backend/build
+
+# Git and Docker files
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+
+# Logs
+*.log

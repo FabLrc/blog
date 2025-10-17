@@ -57,6 +57,31 @@ JWT_SECRET=tobemodified
 ENCRYPTION_KEY=tobemodified
 ```
 
+## 🐳 Utilisation de Docker
+
+Si vous préférez lancer l'application entière (frontend + backend) dans un seul conteneur via Docker Compose :
+
+1. Construire l'image (depuis la racine du projet) :
+
+```bash
+sudo docker-compose build
+```
+
+2. Démarrer le conteneur en arrière-plan :
+
+```bash
+sudo docker-compose up -d
+```
+
+Accès :
+- Frontend : http://localhost:3000
+- Strapi Admin : http://localhost:1337/admin
+
+Notes :
+- Les variables sensibles (secrets Strapi) sont lues depuis `backend/.env` (ou vous pouvez définir des variables d'environnement dans `docker-compose.yml`).
+- Cette configuration construit une seule image contenant frontend et backend pour un usage local/dev rapide. Pour un déploiement en production, il est recommandé d'utiliser des conteneurs séparés (un conteneur frontend, un conteneur backend) et de gérer les secrets via un store dédié.
+
+
 ## ✨ Fonctionnalités
 
 - ✅ Configuration centralisée dans Strapi (profil, liens sociaux, images, SEO)
