@@ -61,6 +61,7 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 - ✅ ISR avec revalidation (1h config, 1min articles)
 - ✅ Coloration syntaxique des blocs de code (Shiki/Prism)
 - ✅ Barre de progression de lecture
+- ✅ Bouton vers le repo Github (avec étoiles)
 
 ## 📂 Structure
 

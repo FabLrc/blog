@@ -3,6 +3,7 @@
 import { SearchDialog } from "@/components/search-dialog";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
+import { GithubButton } from "@/components/github-button";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -51,10 +52,14 @@ export default function Navbar({ siteConfig }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold">
-          {siteConfig.siteName}
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/" className="text-xl font-bold">
+            {siteConfig.siteName}
+          </Link>
+          <GithubButton repo="FabLrc/blog" />
+        </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
