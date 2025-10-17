@@ -96,21 +96,21 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                       key={article.id}
                       value={article.slug}
                       onSelect={() => handleSelect(article.slug)}
-                      className="group flex cursor-pointer flex-col gap-2 rounded-md px-3 py-3 hover:bg-accent aria-selected:bg-accent"
+                      className="group flex cursor-pointer flex-col gap-2 rounded-md px-3 py-3 hover:bg-accent hover:text-accent-foreground aria-selected:bg-accent aria-selected:text-accent-foreground"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1">
-                          <div className="font-medium group-hover:text-primary transition-colors">
+                          <div className="font-medium transition-colors group-hover:text-accent-foreground">
                             {article.title}
                           </div>
                           {article.description && (
-                            <div className="text-sm text-muted-foreground line-clamp-1 mt-1">
+                            <div className="text-sm text-muted-foreground line-clamp-1 mt-1 group-hover:text-accent-foreground">
                               {article.description}
                             </div>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground group-hover:text-accent-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           <span>{publishedDate}</span>
