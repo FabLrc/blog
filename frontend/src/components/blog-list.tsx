@@ -1,7 +1,7 @@
 "use client";
 
 import { StrapiArticle, StrapiCategory } from "@/types/strapi";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ArticleCard from "./article-card";
 import { CategoryFilter } from "./category-filter";
@@ -15,6 +15,23 @@ export function BlogList({ initialArticles, categories }: BlogListProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const updateUrl = useCallback((categoryIds: string[]) => {
+    const currentCategorySlug = searchParams.get("category");
+    
+    if (categoryIds.length === 0) {
+      // Only push if we're not already on /blog
+      if (currentCategorySlug !== null) {
+        router.push("/blog");
+      }
+    } else {
+      // Get the first selected category's slug for URL
+      const selectedCategory = categories.find((cat) => cat.documentId === categoryIds[0]);
+      if (selectedCategory && currentCategorySlug !== selectedCategory.slug) {
+        router.push(`/blog?category=${selectedCategory.slug}`);
+      }
+    }
+  }, [router, categories, searchParams]);
 
   // Read category from URL on mount
   useEffect(() => {
@@ -34,28 +51,16 @@ export function BlogList({ initialArticles, categories }: BlogListProps) {
         ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId];
       
-      // Update URL with selected categories
-      updateUrl(newSelection);
+      // Update URL after state change
+      setTimeout(() => updateUrl(newSelection), 0);
       return newSelection;
     });
   };
 
   const handleClearFilters = () => {
     setSelectedCategories([]);
-    // Clear URL params
-    router.push("/blog");
-  };
-
-  const updateUrl = (categoryIds: string[]) => {
-    if (categoryIds.length === 0) {
-      router.push("/blog");
-    } else {
-      // Get the first selected category's slug for URL
-      const selectedCategory = categories.find((cat) => cat.documentId === categoryIds[0]);
-      if (selectedCategory) {
-        router.push(`/blog?category=${selectedCategory.slug}`);
-      }
-    }
+    // Update URL after state change
+    setTimeout(() => updateUrl([]), 0);
   };
 
   const filteredArticles = useMemo(() => {
