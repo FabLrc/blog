@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { extractTextFromBlocks, searchArticles } from "@/lib/strapi";
 import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
 import { StrapiArticle } from "@/types/strapi";
@@ -8,6 +8,7 @@ import { Command } from "cmdk";
 import { Calendar, Clock, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 interface SearchDialogProps {
   open: boolean;
@@ -45,6 +46,9 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 gap-0">
+        <VisuallyHidden.Root>
+          <DialogTitle>Recherche d&apos;articles</DialogTitle>
+        </VisuallyHidden.Root>
         <Command className="rounded-lg border-none">
           <div className="flex items-center border-b px-3">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
