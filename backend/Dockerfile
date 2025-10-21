@@ -14,9 +14,15 @@ RUN npm install --legacy-peer-deps --production=false
 # Copy source
 COPY . .
 
+# Copy the secret generation script
+COPY generate-secrets.sh /usr/local/bin/generate-secrets.sh
+RUN chmod +x /usr/local/bin/generate-secrets.sh
+
 # Build Strapi admin (if needed)
 RUN npm run build || true
 
 EXPOSE 1337
 
+# Use the script as entrypoint to auto-generate secrets
+ENTRYPOINT ["/usr/local/bin/generate-secrets.sh"]
 CMD ["npm", "run", "start"]
