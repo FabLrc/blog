@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ghcr.io/<OWNER>/blog-backend:latest
+    container_name: blog-backend
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+    volumes:
+      - ./data:/app/.tmp/data
+      - ./uploads:/app/public/uploads
+      - ./backend/.env:/app/.env:ro
+
+  frontend:
+    image: ghcr.io/<OWNER>/blog-frontend:latest
+    container_name: blog-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 30 --registry-auth

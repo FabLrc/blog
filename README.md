@@ -81,6 +81,25 @@ Notes :
 - Les variables sensibles (secrets Strapi) sont lues depuis `backend/.env` (ou vous pouvez définir des variables d'environnement dans `docker-compose.yml`).
 - Cette configuration construit une seule image contenant frontend et backend pour un usage local/dev rapide. Pour un déploiement en production, il est recommandé d'utiliser des conteneurs séparés (un conteneur frontend, un conteneur backend) et de gérer les secrets via un store dédié.
 
+### Déploiement sur NAS (CasaOS) et mises à jour automatiques
+
+Voici une méthode simple pour déployer sur un NAS (CasaOS) et mettre à jour automatiquement depuis GitHub :
+
+1. Utiliser GHCR (GitHub Container Registry) pour héberger les images. Le workflow `.github/workflows/build-and-push.yml` (fourni) build et push les images `blog-backend` et `blog-frontend` sur GHCR.
+2. Sur le NAS, copier `docker-compose.nas.yml` et remplacer `<OWNER>` par ton nom GitHub/organisation dans les images.
+3. Démarrer les services :
+
+```bash
+docker-compose -f docker-compose.nas.yml up -d
+```
+
+4. Pour mise à jour automatique, Watchtower est inclus dans le compose (`watchtower`) et vérifiera périodiquement si de nouvelles images sont disponibles puis mettra à jour les conteneurs.
+
+Notes :
+- Assure-toi que les volumes (`data`, `uploads`) pointent vers des emplacements persistants sur le NAS.
+- Crée les secrets GitHub : `GHCR_PAT` (token) et configure-le dans les Secrets du repo pour permettre le push des images depuis GitHub Actions.
+- Watchtower a accès au socket Docker via `/var/run/docker.sock`.
+
 
 ## ✨ Fonctionnalités
 
@@ -225,6 +244,7 @@ return {
 - [ ] Mode Lecture immersif
 - [ ] Newsletter fonctionnelle (Resend/SendGrid)
 - [ ] Images Open Graph dynamiques (@vercel/og)
+- [ ] CI/CD
 
 ---
 
