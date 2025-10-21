@@ -19,6 +19,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
+      - name: Set owner lowercase
+        run: echo "OWNER_LOWER=${{ toLower(github.repository_owner) }}" >> $GITHUB_ENV
+
       - name: Build & push backend image
         uses: docker/build-push-action@v4
         with:
@@ -26,8 +29,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/blog-backend:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/blog-backend:latest
+            ghcr.io/${{ env.OWNER_LOWER }}/blog-backend:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LOWER }}/blog-backend:latest
 
       - name: Build & push frontend image
         uses: docker/build-push-action@v4
@@ -36,10 +39,10 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/blog-frontend:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/blog-frontend:latest
+            ghcr.io/${{ env.OWNER_LOWER }}/blog-frontend:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LOWER }}/blog-frontend:latest
 
       - name: Image info
         run: |
-          echo "Backend images: ghcr.io/${{ github.repository_owner }}/blog-backend:latest & ${{ github.sha }}"
-          echo "Frontend images: ghcr.io/${{ github.repository_owner }}/blog-frontend:latest & ${{ github.sha }}"
+          echo "Backend images: ghcr.io/${{ env.OWNER_LOWER }}/blog-backend:latest & ${{ github.sha }}"
+          echo "Frontend images: ghcr.io/${{ env.OWNER_LOWER }}/blog-frontend:latest & ${{ github.sha }}"
