@@ -37,4 +37,3 @@ services:
       - --cleanup
       - --interval
       - "30"
-      - --registry-auth
