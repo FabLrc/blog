@@ -81,9 +81,9 @@ Notes :
 - Les variables sensibles (secrets Strapi) sont lues depuis `backend/.env` (ou vous pouvez définir des variables d'environnement dans `docker-compose.yml`).
 - Cette configuration construit une seule image contenant frontend et backend pour un usage local/dev rapide. Pour un déploiement en production, il est recommandé d'utiliser des conteneurs séparés (un conteneur frontend, un conteneur backend) et de gérer les secrets via un store dédié.
 
-### Déploiement sur NAS (CasaOS) et mises à jour automatiques
+### Déploiement sur NAS et mises à jour automatiques
 
-Voici une méthode simple pour déployer sur un NAS (CasaOS) et mettre à jour automatiquement depuis GitHub :
+Voici une méthode simple pour déployer sur un NAS (type gestionnaire de conteneurs, testé avec CasaOS) et mettre à jour automatiquement depuis GitHub :
 
 1. Utiliser GHCR (GitHub Container Registry) pour héberger les images. Le workflow `.github/workflows/build-and-push.yml` (fourni) build et push les images `blog-backend` et `blog-frontend` sur GHCR.
 2. Sur le NAS, copier `docker-compose.nas.yml` et remplacer `<OWNER>` par ton nom GitHub/organisation dans les images.
