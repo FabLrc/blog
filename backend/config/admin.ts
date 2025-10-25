@@ -1,6 +1,12 @@
 export default ({ env }) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
+    // Allow insecure cookies for HTTP connections
+    cookie: {
+      secure: false, // Allow cookies over HTTP
+      httpOnly: true,
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    },
   },
   apiToken: {
     salt: env('API_TOKEN_SALT'),
