@@ -1,41 +1,38 @@
 # 📝 Blog Full-Stack
 
-Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre, thème TweakCN et **configuration centralisée dans Strapi CMS**.
+Blog moderne avec Next.js 15 et WordPress (Headless CMS via GraphQL). Design minimaliste avec mode sombre, thème ShadCN UI et **configuration centralisée dans WordPress**.
 
 ## 👀 Aperçu
 
 <div align="center">
 
 ### Page d'accueil
-![Page d'accueil](screenshots/FireShot%20Capture%20001%20-%20FabLrc%20-%20localhost.png)
+![Page d'accueil](screenshots/screencapture-localhost-3000-2025-11-20-14_55_05.png)
+
+### Barre de recherche
+![Barre de recherche](screenshots/screencapture-localhost-3000-2025-11-20-14_58_09.png)
 
 ### Blog
-![Liste des articles](screenshots/FireShot%20Capture%20002%20-%20FabLrc%20-%20localhost.png)
+![Liste des articles](screenshots/screencapture-localhost-3000-blog-2025-11-20-14_55_34.png)
 
 ### Article
-![Article avec TOC](screenshots/FireShot%20Capture%20003%20-%20Beautiful%20picture%20-%20localhost.png)
-
-### A propos
-![Recherche](screenshots/FireShot%20Capture%20004%20-%20FabLrc%20-%20localhost.png)
+![Article avec TOC](screenshots/screencapture-localhost-3000-blog-gemini-3-pro-le-nouveau-modele-qui-depasse-claude-sonnet-4-5-2025-11-20-15_04_27)
 
 ### Contact
-![Menu mobile](screenshots/FireShot%20Capture%20005%20-%20FabLrc%20-%20localhost.png)
+![Menu mobile](screenshots/screencapture-localhost-3000-contact-2025-11-20-14_57_42.png)
 
 </div>
 
 ## 🚀 Stack
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, ShadCN UI
-- **Backend**: Strapi v5, SQLite
-- **Autres**: React Markdown (GFM), DM Sans, Lucide Icons
+- **Backend**: WordPress (Headless via WPGraphQL)
+- **Autres**: html-react-parser, DM Sans, Lucide Icons
 
 ## 🏁 Démarrage
 
 ```bash
-# Backend
-cd backend && npm install && npm run develop
-
-# Frontend
+# Frontend uniquement
 cd frontend && npm install && npm run dev
 ```
 
@@ -43,11 +40,14 @@ cd frontend && npm install && npm run dev
 
 Créer `frontend/.env.local`:
 ```
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+# WordPress GraphQL API URL
+NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress-site.com/graphql
+
+# Site URL (pour SEO, sitemap, RSS, etc.)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
-Créer `backend/.env.local`:
-```
-HOST=0.0.0.0
+
+> ⚠️ **Note**: Assurez-vous que votre instance WordPress a le plugin **WPGraphQL** installé et activé.
 PORT=1337
 APP_KEYS="toBeModified1,toBeModified2"
 API_TOKEN_SALT=tobemodified
@@ -103,20 +103,20 @@ Notes :
 
 ## ✨ Fonctionnalités
 
-- ✅ Configuration centralisée dans Strapi (profil, liens sociaux, images, SEO)
-- ✅ Multi-catégories par article avec filtres URL-based
+- ✅ Configuration centralisée dans WordPress (titre, description, URL)
+- ✅ Multi-catégories par article avec filtres
 - ✅ Recherche instantanée (`Ctrl+K`) en temps réel
 - ✅ Table des matières interactive avec scroll spy
 - ✅ Mode sombre/clair avec persistance
 - ✅ Breadcrumb SEO avec Schema.org JSON-LD
 - ✅ Sidebar responsive (TOC + partage social)
-- ✅ Rendu Markdown complet (GFM)
+- ✅ Rendu de contenu WordPress (HTML)
 - ✅ Navigation précédent/suivant
 - ✅ Temps de lecture estimé
 - ✅ Flux RSS & Sitemap XML
 - ✅ Open Graph & Twitter Cards
-- ✅ ISR avec revalidation (1h config, 1min articles)
-- ✅ Coloration syntaxique des blocs de code (Shiki/Prism)
+- ✅ ISR avec revalidation
+- ✅ Coloration syntaxique des blocs de code
 - ✅ Barre de progression de lecture
 - ✅ Bouton vers le repo Github (avec étoiles)
 
@@ -124,21 +124,16 @@ Notes :
 
 ```
 blog/
-├── backend/                 # Strapi CMS
-│   ├── src/api/            # Content types (articles, categories, authors)
-│   ├── config/             # Configuration Strapi
-│   └── data/               # Data seed
-│
 └── frontend/               # Next.js App
     └── src/
         ├── app/            # Routes (App Router)
         │   ├── layout.tsx          # Layout global + metadata
-        │   ├── page.tsx            # Homepage (profil)
+        │   ├── page.tsx            # Homepage (liste articles)
         │   ├── blog/               # Liste + articles
         │   ├── about/              # À propos
         │   ├── contact/            # Contact
         │   ├── rss.xml/            # Flux RSS
-        │   └── sitemap.xml/        # Sitemap
+        │   └── sitemap.ts          # Sitemap
         │
         ├── components/     # Composants React
         │   ├── navbar.tsx          # Navigation principale
@@ -150,68 +145,131 @@ blog/
         │   └── ui/                 # ShadCN components
         │
         ├── lib/            # Utils
-        │   ├── strapi.ts           # API Strapi + getSiteConfig()
+        │   ├── wordpress.ts        # API WordPress GraphQL
         │   └── utils.ts            # Helpers
         │
         └── types/          # TypeScript
-            └── strapi.ts           # Interfaces Strapi
+            └── wordpress.ts        # Interfaces WordPress
 ```
 
 ## 🏗️ Architecture
 
 ### Configuration centralisée
-- **Toutes les données du site** sont gérées dans Strapi (Single Type `site-config`)
-- Le frontend récupère la config via `getSiteConfig()` avec cache 1h
-- Fallback automatique si Strapi indisponible
+- **Toutes les données du site** sont gérées dans WordPress
+- Le frontend récupère la configuration via `getGeneralSettings()` depuis WPGraphQL
+- Fallback automatique sur des valeurs par défaut si WordPress est indisponible
 
 ### Pattern Server/Client Components
-- **Server Components** : Fetch les données (pages, layout)
-- **Client Components** : Interactivité (filtres, recherche, formulaires)
-- Config passée via props depuis serveur vers client
+- **Server Components** : Récupèrent les données depuis WordPress (pages, layout)
+- **Client Components** : Gèrent l'interactivité (filtres, recherche, formulaires)
+- Configuration passée via props depuis serveur vers client
 
 ### Flux de données
 ```
-Strapi Admin → site-config → API → getSiteConfig() → Server Components → Props → Client Components
+WordPress Admin → Réglages → WPGraphQL API → getGeneralSettings() → Server Components → Props → Client Components
 ```
 
 ## ⚙️ Configuration
 
-### 🎛️ Configuration du site (Strapi CMS)
-Toute la configuration du site est gérée via Strapi :
+### 🎛️ Configuration du site (WordPress CMS)
+Toute la configuration du site est gérée via WordPress et récupérée automatiquement par le frontend via WPGraphQL.
 
-1. **Créer le content-type `site-config`** dans Strapi (Single Type)
-2. **Configurer les champs** (voir `STRAPI_SITE_CONFIG.md`)
-3. **Activer les permissions** : Settings → Users & Permissions → Public → site-config (find ✓)
-4. **Remplir les données** : Content Manager → Site Config
+## 📊 Données récupérées depuis WordPress
+
+Le frontend récupère dynamiquement les données suivantes depuis WordPress via WPGraphQL :
+
+### 🌐 Configuration générale du site (`GeneralSettings`)
+Récupérée via `getGeneralSettings()` et utilisée dans :
+- **Métadonnées SEO** (`layout.tsx`)
+- **Flux RSS** (`rss.xml/route.ts`)
+- **Footer** (`footer.tsx`)
+- **Navbar** (`navbar.tsx`)
 
 **Champs disponibles** :
-- Informations du site (nom, description, URL)
-- Profil (nom, username, bio, email, avatar)
-- Liens sociaux (GitHub, Twitter, LinkedIn, email)
-- SEO (meta description, keywords)
-- Images (logo, favicon)
-- Options (newsletter, commentaires)
-- Textes (footer, copyright)
+- `title` : Titre du site (ex: "Mon Blog")
+- `description` : Description du site pour le SEO
+- `url` : URL racine du site WordPress
 
-Voir la **documentation complète** : [`STRAPI_SITE_CONFIG.md`](STRAPI_SITE_CONFIG.md)
+### 📝 Articles de blog (`Post`)
+Récupérés via `getAllPosts()` et `getPostBySlug()` :
+
+**Champs de base** :
+- `id` : Identifiant unique GraphQL
+- `databaseId` : ID numérique dans la base de données
+- `title` : Titre de l'article
+- `slug` : URL-friendly slug (ex: "mon-article")
+- `date` : Date de publication (ISO 8601)
+- `excerpt` : Extrait/résumé de l'article (HTML)
+- `content` : Contenu complet de l'article (HTML) - *optionnel, chargé uniquement sur les pages d'articles*
+
+**Image à la une** (`featuredImage`) :
+- `sourceUrl` : URL de l'image
+- `altText` : Texte alternatif pour l'accessibilité
+
+**Auteur** (`author.node`) :
+- `name` : Nom complet de l'auteur
+- `avatar.url` : URL de l'avatar Gravatar
+
+**Catégories** (`categories.nodes[]`) :
+- `name` : Nom de la catégorie (ex: "Technologie")
+- `slug` : Slug de la catégorie (ex: "technologie")
+
+### 🏷️ Catégories (`Category`)
+Récupérées via `getAllCategories()` :
+- `id` : Identifiant unique GraphQL
+- `databaseId` : ID numérique
+- `name` : Nom de la catégorie
+- `slug` : Slug URL
+- `count` : Nombre d'articles dans cette catégorie
+
+### 🔍 Recherche
+Recherche d'articles via `searchPosts(query)` qui retourne les mêmes champs que `getAllPosts()`
+
+### ⬅️➡️ Navigation entre articles
+Récupération des articles adjacents via `getAdjacentPosts()` :
+- `previousPost` : Article précédent (`{ slug, title }`)
+- `nextPost` : Article suivant (`{ slug, title }`)
+
+### 📍 Utilisation des données
+
+| Composant/Page | Données WordPress utilisées |
+|----------------|----------------------------|
+| `layout.tsx` | `title`, `description`, `url` (SEO, métadonnées) |
+| `page.tsx` (accueil) | Liste des articles récents |
+| `blog/page.tsx` | Tous les articles + catégories |
+| `blog/[slug]/page.tsx` | Article complet avec auteur, catégories, image |
+| `navbar.tsx` | Titre du site |
+| `footer.tsx` | Titre du site |
+| `rss.xml/route.ts` | Articles + métadonnées du site |
+| `sitemap.ts` | Tous les slugs d'articles |
+| `search-dialog.tsx` | Recherche d'articles |
+| `article-navigation.tsx` | Articles précédent/suivant |
+
+### 🔧 Configuration WordPress requise
+
+Pour que le frontend fonctionne correctement, assurez-vous que WordPress est configuré avec :
+
+1. **Plugin WPGraphQL** installé et activé
+2. **Paramètres généraux** remplis (Réglages → Général) :
+   - Titre du site
+   - Slogan (utilisé comme description)
+   - URL WordPress
+3. **Articles publiés** avec :
+   - Images à la une
+   - Catégories assignées
+   - Extraits renseignés (sinon générés automatiquement)
 
 ### 🎨 Thème visuel
 - **Couleurs et design** : `frontend/src/app/globals.css`
-- **Données démo** : `cd backend && npm run seed:example`
+- **Configuration du site** : WordPress → Réglages → Général
 
 ## 🎨 Personnalisation
 
 ### Changer le titre du blog
-Via **Strapi Admin** → Content Manager → Site Config → `siteName`
+Via **WordPress Admin** → Réglages → Général → Titre du site
 
-Ou temporairement dans le code (`frontend/src/lib/strapi.ts`) :
-```typescript
-// Valeurs par défaut si Strapi n'est pas disponible
-return {
-  siteName: "Mon Super Blog",
-  // ...
-}
-```
+### Changer la description
+Via **WordPress Admin** → Réglages → Général → Slogan
 
 ### URLs importantes
 - `/` - Page d'accueil (profil social)
@@ -224,11 +282,9 @@ return {
 - `/sitemap.xml` - Sitemap SEO
 - `/robots.txt` - Instructions robots
 
-### API Strapi
-- `http://localhost:1337/api/articles` - Articles
-- `http://localhost:1337/api/categories` - Catégories
-- `http://localhost:1337/api/site-config` - Configuration du site
-- `http://localhost:1337/admin` - Panel d'administration
+### API WordPress
+- `https://your-wordpress-site.com/graphql` - API GraphQL
+- `https://your-wordpress-site.com/wp-admin` - Panel d'administration WordPress
 
 ### Raccourcis clavier
 - `Ctrl+K` / `Cmd+K` - Ouvrir la recherche
