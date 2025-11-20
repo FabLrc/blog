@@ -4,6 +4,23 @@ import { GeneralSettings } from "@/types/wordpress";
 import { Rss } from "lucide-react";
 import Link from "next/link";
 
+// Fonction pour décoder les entités HTML
+function decodeHtmlEntities(text: string): string {
+  if (typeof window === 'undefined') {
+    // Côté serveur : utiliser replace pour les entités communes
+    return text
+      .replace(/&#039;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+  }
+  // Côté client : utiliser DOMParser (plus fiable)
+  const txt = document.createElement('textarea');
+  txt.innerHTML = text;
+  return txt.value;
+}
+
 interface FooterProps {
   siteConfig: GeneralSettings | null;
 }
@@ -35,8 +52,8 @@ export default function Footer({ siteConfig }: FooterProps) {
             <Link href="/" className="text-xl font-bold hover:text-primary transition-colors">
               {siteConfig?.title || "Mon Blog"}
             </Link>
-            <p className="text-sm text-muted-foreground mt-1">
-              {siteConfig?.description || "Blog personnel"}
+            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+              {siteConfig?.description ? decodeHtmlEntities(siteConfig.description) : "Blog personnel"}
             </p>
           </div>
 
@@ -58,7 +75,7 @@ export default function Footer({ siteConfig }: FooterProps) {
 
           {/* Copyright */}
           <div className="text-sm text-muted-foreground text-center md:text-right">
-            <p>{` © ${currentYear} ${siteConfig?.title || "Mon Blog"}`}</p>
+            <p>© {currentYear} {siteConfig?.title || "Mon Blog"}</p>
             <p className="mt-1">Tous droits réservés</p>
           </div>
         </div>
