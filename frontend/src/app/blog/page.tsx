@@ -1,12 +1,12 @@
-import { getArticles, getCategories } from "@/lib/strapi";
+import { getAllPosts, getAllCategories } from "@/lib/wordpress";
 import { BlogList } from "@/components/blog-list";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Suspense } from "react";
 
 export default async function BlogPage() {
-  const [articles, categories] = await Promise.all([
-    getArticles(),
-    getCategories(),
+  const [posts, categories] = await Promise.all([
+    getAllPosts(100), // Fetch more posts for the list
+    getAllCategories(),
   ]);
 
   return (
@@ -28,13 +28,13 @@ export default async function BlogPage() {
         </div>
 
         {/* Articles with Filtering */}
-        {articles.length === 0 ? (
+        {posts.length === 0 ? (
           <p className="text-center text-muted-foreground">
             Aucun article disponible pour le moment.
           </p>
         ) : (
           <Suspense fallback={<div>Chargement...</div>}>
-            <BlogList initialArticles={articles} categories={categories} />
+            <BlogList initialPosts={posts} categories={categories} />
           </Suspense>
         )}
       </div>

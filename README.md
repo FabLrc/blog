@@ -1,41 +1,38 @@
 # 📝 Blog Full-Stack
 
-Blog moderne avec Next.js 15 et Strapi v5. Design minimaliste avec mode sombre, thème TweakCN et **configuration centralisée dans Strapi CMS**.
+Blog moderne avec Next.js 15 et WordPress (Headless CMS via GraphQL). Design minimaliste avec mode sombre, thème ShadCN UI et **configuration centralisée dans WordPress**.
 
 ## 👀 Aperçu
 
 <div align="center">
 
 ### Page d'accueil
-![Page d'accueil](screenshots/FireShot%20Capture%20001%20-%20FabLrc%20-%20localhost.png)
+![Page d'accueil](screenshots/screencapture-localhost-3000-2025-11-20-14_55_05.png)
+
+### Barre de recherche
+![Barre de recherche](screenshots/screencapture-localhost-3000-2025-11-20-14_58_09.png)
 
 ### Blog
-![Liste des articles](screenshots/FireShot%20Capture%20002%20-%20FabLrc%20-%20localhost.png)
+![Liste des articles](screenshots/screencapture-localhost-3000-blog-2025-11-20-14_55_34.png)
 
 ### Article
-![Article avec TOC](screenshots/FireShot%20Capture%20003%20-%20Beautiful%20picture%20-%20localhost.png)
-
-### A propos
-![Recherche](screenshots/FireShot%20Capture%20004%20-%20FabLrc%20-%20localhost.png)
+![Article avec TOC](screenshots/screencapture-localhost-3000-blog-gemini-3-pro-le-nouveau-modele-qui-depasse-claude-sonnet-4-5-2025-11-20-15_04_27)
 
 ### Contact
-![Menu mobile](screenshots/FireShot%20Capture%20005%20-%20FabLrc%20-%20localhost.png)
+![Menu mobile](screenshots/screencapture-localhost-3000-contact-2025-11-20-14_57_42.png)
 
 </div>
 
 ## 🚀 Stack
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, ShadCN UI
-- **Backend**: Strapi v5, SQLite
-- **Autres**: React Markdown (GFM), DM Sans, Lucide Icons
+- **Backend**: WordPress (Headless via WPGraphQL)
+- **Autres**: html-react-parser, DM Sans, Lucide Icons
 
 ## 🏁 Démarrage
 
 ```bash
-# Backend
-cd backend && npm install && npm run develop
-
-# Frontend
+# Frontend uniquement
 cd frontend && npm install && npm run dev
 ```
 
@@ -43,11 +40,14 @@ cd frontend && npm install && npm run dev
 
 Créer `frontend/.env.local`:
 ```
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+# WordPress GraphQL API URL
+NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress-site.com/graphql
+
+# Site URL (pour SEO, sitemap, RSS, etc.)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
-Créer `backend/.env.local`:
-```
-HOST=0.0.0.0
+
+> ⚠️ **Note**: Assurez-vous que votre instance WordPress a le plugin **WPGraphQL** installé et activé.
 PORT=1337
 APP_KEYS="toBeModified1,toBeModified2"
 API_TOKEN_SALT=tobemodified

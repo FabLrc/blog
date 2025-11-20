@@ -4,14 +4,14 @@ import { useState, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { subscribeToNewsletter } from "@/lib/strapi";
+import { subscribeToNewsletter } from "@/lib/wordpress";
 import { Mail, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface NewsletterFormProps {
   source?: string;
 }
 
-export default function NewsletterForm({ source = "article" }: NewsletterFormProps) {
+export default function NewsletterForm({ }: NewsletterFormProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
@@ -38,7 +38,7 @@ export default function NewsletterForm({ source = "article" }: NewsletterFormPro
     setLoading(true);
 
     try {
-      const result = await subscribeToNewsletter(email, source);
+      const result = await subscribeToNewsletter(email);
       
       setStatus({
         type: result.success ? "success" : "error",

@@ -1,13 +1,13 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { StrapiCategory } from "@/types/strapi";
+import { Category } from "@/types/wordpress";
 import { X } from "lucide-react";
 
 interface CategoryFilterProps {
-  categories: StrapiCategory[];
+  categories: Category[];
   selectedCategories: string[];
-  onCategoryToggle: (categoryId: string) => void;
+  onCategoryToggle: (categorySlug: string) => void;
   onClearFilters: () => void;
 }
 
@@ -35,19 +35,20 @@ export function CategoryFilter({
         </Badge>
 
         {categories.map((category) => {
-          const isSelected = selectedCategories.includes(category.documentId);
+          const isSelected = selectedCategories.includes(category.slug);
           return (
             <Badge
-              key={category.id}
+              key={category.slug}
               variant={isSelected ? "default" : "outline"}
               className="cursor-pointer transition-all hover:shadow-md"
-              onClick={() => onCategoryToggle(category.documentId)}
+              onClick={() => onCategoryToggle(category.slug)}
             >
               {category.name}
               {isSelected && <X className="ml-1 h-3 w-3" />}
             </Badge>
           );
         })}
+
       </div>
       
       {activeCount > 0 && (

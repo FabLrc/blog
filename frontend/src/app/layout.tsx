@@ -1,7 +1,7 @@
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { getSiteConfig } from "@/lib/strapi";
+import { getGeneralSettings } from "@/lib/wordpress";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -15,17 +15,15 @@ const dmSans = DM_Sans({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteConfig = await getSiteConfig();
+  const siteConfig = await getGeneralSettings();
   
   return {
     title: {
-      default: siteConfig.siteName,
-      template: `%s | ${siteConfig.siteName}`,
+      default: siteConfig?.title || "Mon Blog",
+      template: `%s | ${siteConfig?.title || "Mon Blog"}`,
     },
-    description: siteConfig.siteDescription || siteConfig.metaDescription,
-    keywords: siteConfig.metaKeywords?.split(',').map((k: string) => k.trim()),
-    authors: [{ name: siteConfig.profileName }],
-    metadataBase: new URL(siteConfig.siteUrl || 'http://localhost:3000'),
+    description: siteConfig?.description || "Blog personnel",
+    metadataBase: new URL(siteConfig?.url || 'http://localhost:3000'),
   };
 }
 
@@ -34,14 +32,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteConfig = await getSiteConfig();
+  const siteConfig = await getGeneralSettings();
   return (
     <html lang="fr" suppressHydrationWarning className={dmSans.variable}>
       <head>
         <link
           rel="alternate"
           type="application/rss+xml"
-          title={`${siteConfig.siteName} - Flux RSS`}
+          title={`${siteConfig?.title || "Mon Blog"} - Flux RSS`}
           href="/rss.xml"
         />
         <script

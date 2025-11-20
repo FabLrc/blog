@@ -3,7 +3,7 @@ import { FeaturedArticle } from "@/components/featured-article";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getArticles, getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
+import { getAllPosts, getGeneralSettings } from "@/lib/wordpress";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 
@@ -15,117 +15,108 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 
 export default async function Home() {
-  const [articles, siteConfig] = await Promise.all([
-    getArticles(4),
-    getSiteConfig(),
+  const [posts, settings] = await Promise.all([
+    getAllPosts(4),
+    getGeneralSettings(),
   ]);
   
-  const [featuredArticle, ...recentArticles] = articles;
+  const [featuredPost, ...recentPosts] = posts;
 
-  // Get avatar URL from Strapi or fallback to GitHub
-  const avatarUrl = siteConfig.profileAvatar
-    ? getStrapiImageUrl(siteConfig.profileAvatar.url)
-    : `https://github.com/${siteConfig.profileUsername}.png`;
+  // Fallback values if settings are missing or incomplete
+  // const siteTitle = settings?.title || "Mon Blog";
+  const siteDescription = settings?.description || "Bienvenue sur mon blog";
+  
+  // Hardcoded profile info for now as it's not standard in WP General Settings
+  // You might want to fetch this from a specific page or user in the future
+  const profileName = "Fabien"; // Replace with dynamic data if available
+  const profileBio = siteDescription;
+  const avatarUrl = "https://github.com/FabLrc.png"; // Fallback to GitHub avatar
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       {/* Profile Section */}
       <div className="mb-12 text-center">
         <Avatar className="mx-auto mb-4 h-24 w-24">
-          <AvatarImage src={avatarUrl} alt={siteConfig.profileName} />
+          <AvatarImage src={avatarUrl} alt={profileName} />
           <AvatarFallback>
-            {siteConfig.profileName.split(" ").map((n: string) => n[0]).join("").toUpperCase()}
+            {profileName.split(" ").map((n: string) => n[0]).join("").toUpperCase()}
           </AvatarFallback>
         </Avatar>
         
-        <h1 className="mb-2 text-3xl font-bold">{siteConfig.profileName}</h1>
+        <h1 className="mb-2 text-3xl font-bold">{profileName}</h1>
         
         <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
-          {siteConfig.profileBio}
+          {profileBio}
         </p>
 
         <div className="flex justify-center gap-2">
-          {siteConfig.socialGithub && (
-            <Button variant="outline" size="icon" asChild title="GitHub">
-              <a
-                href={siteConfig.socialGithub}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-              >
-                <Github className="h-4 w-4" />
-              </a>
-            </Button>
-          )}
-          {siteConfig.socialLinkedin && (
-            <Button variant="outline" size="icon" asChild title="LinkedIn">
-              <a
-                href={siteConfig.socialLinkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
-            </Button>
-          )}
-          {siteConfig.socialTwitter && (
-            <Button variant="outline" size="icon" asChild title="X (Twitter)">
-              <a
-                href={siteConfig.socialTwitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="X (Twitter)"
-              >
-                <XIcon className="h-4 w-4" />
-              </a>
-            </Button>
-          )}
+          <Button variant="outline" size="icon" asChild title="GitHub">
+            <a
+              href="https://github.com/FabLrc"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Github className="h-5 w-5" />
+              <span className="sr-only">GitHub</span>
+            </a>
+          </Button>
+          <Button variant="outline" size="icon" asChild title="LinkedIn">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Linkedin className="h-5 w-5" />
+              <span className="sr-only">LinkedIn</span>
+            </a>
+          </Button>
+          <Button variant="outline" size="icon" asChild title="X (Twitter)">
+            <a
+              href="https://x.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <XIcon className="h-4 w-4" />
+              <span className="sr-only">X (Twitter)</span>
+            </a>
+          </Button>
         </div>
       </div>
 
-      <Separator className="mb-12" />
+      <Separator className="my-12" />
 
       {/* Featured Article */}
-      {featuredArticle && (
-        <div className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold">Dernier article</h2>
-          <FeaturedArticle article={featuredArticle} />
-        </div>
+      {featuredPost && (
+        <section className="mb-12">
+          <h2 className="mb-6 text-2xl font-bold">À la une</h2>
+          <FeaturedArticle post={featuredPost} />
+        </section>
       )}
 
       {/* Recent Articles */}
-      {recentArticles.length > 0 && (
-        <div className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold">Articles récents</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recentArticles.map((article) => {
-              const categories = article.categories || (article.category ? [article.category] : []);
-              
-              return (
-                <ArticleCard
-                  key={article.id}
-                  slug={article.slug}
-                  title={article.title}
-                  excerpt={article.description}
-                  coverImage={article.cover?.url || ""}
-                  categories={categories}
-                  publishedAt={article.publishedAt}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* View All Articles Link */}
-      {articles.length >= 4 && (
-        <div className="text-center">
-          <Button variant="outline" asChild>
-            <Link href="/blog">Voir tous les articles</Link>
+      <section>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Articles récents</h2>
+          <Button variant="ghost" asChild>
+            <Link href="/blog">Voir tout</Link>
           </Button>
         </div>
-      )}
+        
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {recentPosts.map((post) => (
+            <ArticleCard
+              key={post.slug}
+              slug={post.slug}
+              title={post.title}
+              excerpt={post.excerpt}
+              featuredImage={post.featuredImage?.node.sourceUrl}
+              categories={post.categories}
+              date={post.date}
+              content={post.content} // Passed for reading time calculation
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

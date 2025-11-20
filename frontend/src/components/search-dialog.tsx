@@ -1,11 +1,10 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { extractTextFromBlocks, searchArticles } from "@/lib/strapi";
-import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
-import { StrapiArticle } from "@/types/strapi";
+import { searchPosts } from "@/lib/wordpress";
+import { Post } from "@/types/wordpress";
 import { Command } from "cmdk";
-import { Calendar, Clock, Search } from "lucide-react";
+import { Calendar, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
@@ -18,14 +17,14 @@ interface SearchDialogProps {
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<StrapiArticle[]>([]);
+  const [results, setResults] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const searchTimeout = setTimeout(async () => {
       if (query.trim().length > 0) {
         setLoading(true);
-        const articles = await searchArticles(query);
+        const articles = await searchPosts(query);
         setResults(articles);
         setLoading(false);
       } else {
@@ -82,10 +81,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             {!loading && results.length > 0 && (
               <Command.Group heading="Articles">
                 {results.map((article) => {
-                  const articleText = extractTextFromBlocks(article.blocks || []);
-                  const readingMinutes = calculateReadingTime(articleText);
-                  const readingTime = formatReadingTime(readingMinutes);
-                  const publishedDate = new Date(article.publishedAt).toLocaleDateString("fr-FR", {
+                  const publishedDate = new Date(article.date).toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -103,10 +99,11 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                           <div className="font-medium transition-colors group-hover:text-accent-foreground">
                             {article.title}
                           </div>
-                          {article.description && (
-                            <div className="text-sm text-muted-foreground line-clamp-1 mt-1 group-hover:text-accent-foreground">
-                              {article.description}
-                            </div>
+                          {article.excerpt && (
+                            <div 
+                              className="text-sm text-muted-foreground line-clamp-1 mt-1 group-hover:text-accent-foreground"
+                              dangerouslySetInnerHTML={{ __html: article.excerpt }}
+                            />
                           )}
                         </div>
                       </div>
@@ -115,15 +112,10 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                           <Calendar className="h-3 w-3" />
                           <span>{publishedDate}</span>
                         </div>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          <span>{readingTime}</span>
-                        </div>
-                        {article.categories && article.categories.length > 0 && (
+                        {article.categories && article.categories.nodes.length > 0 && (
                           <>
                             <span>•</span>
-                            <span className="text-primary">{article.categories[0].name}</span>
+                            <span className="text-primary">{article.categories.nodes[0].name}</span>
                           </>
                         )}
                       </div>

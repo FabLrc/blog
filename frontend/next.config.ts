@@ -1,24 +1,35 @@
 import type { NextConfig } from "next";
 
+const getWordPressPattern = () => {
+  if (!process.env.NEXT_PUBLIC_WORDPRESS_API_URL) {
+    return [];
+  }
+  
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_WORDPRESS_API_URL);
+    return [
+      {
+        protocol: url.protocol.replace(':', '') as 'https' | 'http',
+        hostname: url.hostname,
+      },
+    ];
+  } catch {
+    return [];
+  }
+};
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "1337",
+        protocol: 'https',
+        hostname: 'secure.gravatar.com',
       },
       {
-        protocol: "http",
-        hostname: "backend",
-        port: "1337",
+        protocol: 'https',
+        hostname: 'github.com',
       },
-      {
-        // Permet d'utiliser l'IP ou le domaine du NAS
-        protocol: "http",
-        hostname: "*",
-        port: "1337",
-      },
+      ...getWordPressPattern(),
     ],
   },
   output: "standalone",

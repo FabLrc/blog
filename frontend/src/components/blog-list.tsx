@@ -1,84 +1,81 @@
 "use client";
 
-import { StrapiArticle, StrapiCategory } from "@/types/strapi";
+import { Post, Category } from "@/types/wordpress";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ArticleCard from "./article-card";
 import { CategoryFilter } from "./category-filter";
 
 interface BlogListProps {
-  initialArticles: StrapiArticle[];
-  categories: StrapiCategory[];
+  initialPosts: Post[];
+  categories: Category[];
 }
 
-export function BlogList({ initialArticles, categories }: BlogListProps) {
+export function BlogList({ initialPosts, categories }: BlogListProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const updateUrl = useCallback((categoryIds: string[]) => {
+  const updateUrl = useCallback((categorySlugs: string[]) => {
     const currentCategorySlug = searchParams.get("category");
     
-    if (categoryIds.length === 0) {
+    if (categorySlugs.length === 0) {
       // Only push if we're not already on /blog
       if (currentCategorySlug !== null) {
         router.push("/blog");
       }
     } else {
       // Get the first selected category's slug for URL
-      const selectedCategory = categories.find((cat) => cat.documentId === categoryIds[0]);
-      if (selectedCategory && currentCategorySlug !== selectedCategory.slug) {
-        router.push(`/blog?category=${selectedCategory.slug}`);
+      const selectedSlug = categorySlugs[0];
+      if (selectedSlug && currentCategorySlug !== selectedSlug) {
+        router.push(`/blog?category=${selectedSlug}`);
       }
     }
-  }, [router, categories, searchParams]);
+  }, [router, searchParams]);
 
   // Read category from URL on mount
   useEffect(() => {
     const categorySlug = searchParams.get("category");
     if (categorySlug) {
-      // Find the category by slug
+      // Verify it exists in our categories list
       const category = categories.find((cat) => cat.slug === categorySlug);
       if (category) {
-        setSelectedCategories([category.documentId]);
+        setSelectedCategories([category.slug]);
       }
     }
   }, [searchParams, categories]);
 
-  const handleCategoryToggle = (categoryId: string) => {
+  const handleCategoryToggle = (categorySlug: string) => {
     setSelectedCategories((prev) => {
-      const newSelection = prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId];
+      const newSelection = prev.includes(categorySlug)
+        ? prev.filter((id) => id !== categorySlug)
+        : [categorySlug]; // Single selection mode for now to match URL behavior
       
-      // Update URL after state change
-      setTimeout(() => updateUrl(newSelection), 0);
+      updateUrl(newSelection);
       return newSelection;
     });
   };
 
   const handleClearFilters = () => {
     setSelectedCategories([]);
-    // Update URL after state change
-    setTimeout(() => updateUrl([]), 0);
+    updateUrl([]);
   };
 
-  const filteredArticles = useMemo(() => {
+  const filteredPosts = useMemo(() => {
     if (selectedCategories.length === 0) {
-      return initialArticles;
+      return initialPosts;
     }
 
-    return initialArticles.filter((article) => {
-      // Support both single category and multiple categories
-      const articleCategories = article.categories || (article.category ? [article.category] : []);
-      return articleCategories.some((cat) =>
-        selectedCategories.includes(cat.documentId)
+    return initialPosts.filter((post) => {
+      // Check if post has any of the selected categories
+      return post.categories.nodes.some((cat) => 
+        selectedCategories.includes(cat.slug)
       );
     });
-  }, [initialArticles, selectedCategories]);
+  }, [initialPosts, selectedCategories]);
 
   return (
-    <>
+    <div>
       <CategoryFilter
         categories={categories}
         selectedCategories={selectedCategories}
@@ -86,33 +83,28 @@ export function BlogList({ initialArticles, categories }: BlogListProps) {
         onClearFilters={handleClearFilters}
       />
 
-      {filteredArticles.length === 0 ? (
-        <div className="py-12 text-center">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredPosts.map((post) => (
+          <ArticleCard
+            key={post.slug}
+            slug={post.slug}
+            title={post.title}
+            excerpt={post.excerpt}
+            featuredImage={post.featuredImage?.node.sourceUrl}
+            categories={post.categories}
+            date={post.date}
+            content={post.content}
+          />
+        ))}
+      </div>
+
+      {filteredPosts.length === 0 && (
+        <div className="text-center py-12">
           <p className="text-muted-foreground">
-            Aucun article trouvé pour cette sélection.
+            Aucun article ne correspond à vos critères.
           </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredArticles.map((article) => {
-            // Get all categories for the article
-            const articleCategories = article.categories || (article.category ? [article.category] : []);
-
-            return (
-              <ArticleCard
-                key={article.id}
-                slug={article.slug}
-                title={article.title}
-                excerpt={article.description}
-                coverImage={article.cover?.url || ""}
-                categories={articleCategories}
-                publishedAt={article.publishedAt}
-                blocks={article.blocks}
-              />
-            );
-          })}
-        </div>
       )}
-    </>
+    </div>
   );
 }

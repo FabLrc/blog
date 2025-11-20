@@ -11,17 +11,18 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { StrapiSiteConfig } from "@/types/strapi";
+import { GeneralSettings } from "@/types/wordpress";
 import { Menu, Moon, Search, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface NavbarProps {
-  siteConfig: StrapiSiteConfig;
+  siteConfig: GeneralSettings | null;
 }
 
 export default function Navbar({ siteConfig }: NavbarProps) {
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -56,7 +57,7 @@ export default function Navbar({ siteConfig }: NavbarProps) {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/" className="text-xl font-bold">
-            {siteConfig.siteName}
+            {siteConfig?.title || "Mon Blog"}
           </Link>
           <GithubButton repo="FabLrc/blog" />
         </div>

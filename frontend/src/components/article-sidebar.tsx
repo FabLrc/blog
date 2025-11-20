@@ -95,8 +95,8 @@ export default function ArticleSidebar({ title, url }: ArticleSidebarProps) {
   return (
     <>
       {/* Desktop Sidebar - Fixed on the right side */}
-      <aside className="hidden 2xl:block fixed right-8 top-32 w-64 space-y-4">
-        <div className="sticky top-32 max-h-[calc(100vh-12rem)] overflow-y-auto space-y-4 pr-2">
+      <aside className="hidden 2xl:block fixed right-8 top-32 w-64 max-h-[calc(100vh-10rem)] space-y-4">
+        <div className="sticky top-32 space-y-4">
           {/* Social Share */}
           <Card className="shadow-sm">
             <CardHeader className="pb-3">
@@ -166,8 +166,8 @@ export default function ArticleSidebar({ title, url }: ArticleSidebarProps) {
                 <CardTitle className="text-sm">Sommaire</CardTitle>
               </CardHeader>
               <Separator />
-              <CardContent className="pt-4">
-                <nav className="max-h-[calc(100vh-32rem)] overflow-y-auto pr-2">
+              <CardContent className="pt-4 max-h-[50vh] overflow-y-auto">
+                <nav>
                   <ul className="space-y-2 text-sm">
                     {headings.map((heading) => (
                       <li

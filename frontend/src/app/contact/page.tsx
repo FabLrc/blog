@@ -1,10 +1,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSiteConfig } from "@/lib/strapi";
+// import { getGeneralSettings } from "@/lib/wordpress";
 import { Mail, MessageSquare } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 
 export default async function ContactPage() {
-  const siteConfig = await getSiteConfig();
+  // const settings = await getGeneralSettings();
+  const profileEmail = "contact@example.com"; // Hardcoded for now
+  
+  const siteConfig = {
+    profileEmail: "contact@example.com",
+    socialTwitter: "https://twitter.com",
+    socialLinkedin: "https://linkedin.com",
+    socialGithub: "https://github.com"
+  };
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">
@@ -44,7 +52,7 @@ export default async function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {siteConfig.profileEmail && (
+              {profileEmail && (
                 <div>
                   <h3 className="font-semibold mb-1">Email</h3>
                   <a

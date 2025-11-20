@@ -1,11 +1,11 @@
 import NewsletterForm from "@/components/newsletter-form";
 import { Separator } from "@/components/ui/separator";
-import { StrapiSiteConfig } from "@/types/strapi";
+import { GeneralSettings } from "@/types/wordpress";
 import { Rss } from "lucide-react";
 import Link from "next/link";
 
 interface FooterProps {
-  siteConfig: StrapiSiteConfig;
+  siteConfig: GeneralSettings | null;
 }
 
 export default function Footer({ siteConfig }: FooterProps) {
@@ -22,11 +22,9 @@ export default function Footer({ siteConfig }: FooterProps) {
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-12">
         {/* Newsletter Section */}
-        {siteConfig.newsletterEnabled !== false && (
-          <div className="max-w-2xl mx-auto mb-12">
-            <NewsletterForm source="footer" />
-          </div>
-        )}
+        <div className="max-w-2xl mx-auto mb-12">
+          <NewsletterForm source="footer" />
+        </div>
 
         <Separator className="mb-8" />
 
@@ -35,12 +33,13 @@ export default function Footer({ siteConfig }: FooterProps) {
           {/* Brand */}
           <div className="text-center md:text-left">
             <Link href="/" className="text-xl font-bold hover:text-primary transition-colors">
-              {siteConfig.siteName}
+              {siteConfig?.title || "Mon Blog"}
             </Link>
             <p className="text-sm text-muted-foreground mt-1">
-              {siteConfig.footerText || siteConfig.siteDescription}
+              {siteConfig?.description || "Blog personnel"}
             </p>
           </div>
+
 
           {/* Links */}
           <nav className="flex flex-wrap justify-center gap-6">
@@ -59,7 +58,7 @@ export default function Footer({ siteConfig }: FooterProps) {
 
           {/* Copyright */}
           <div className="text-sm text-muted-foreground text-center md:text-right">
-            <p>{` © ${currentYear} ${siteConfig.profileName}`}</p>
+            <p>{` © ${currentYear} ${siteConfig?.title || "Mon Blog"}`}</p>
             <p className="mt-1">Tous droits réservés</p>
           </div>
         </div>

@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getSiteConfig, getStrapiImageUrl } from "@/lib/strapi";
+import { getGeneralSettings } from "@/lib/wordpress";
 import { Github, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 // Icône X (anciennement Twitter)
 const XIcon = ({ className }: { className?: string }) => (
@@ -13,12 +12,16 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 
 export default async function AboutPage() {
-  const siteConfig = await getSiteConfig();
+  const settings = await getGeneralSettings();
   
-  // Get avatar URL from Strapi or fallback to GitHub
-  const avatarUrl = siteConfig.profileAvatar
-    ? getStrapiImageUrl(siteConfig.profileAvatar.url)
-    : `https://github.com/${siteConfig.profileUsername}.png`;
+  // Hardcoded profile info (replace with dynamic data if available)
+  const profileName = "Fabien";
+  const profileUsername = "FabLrc";
+  const avatarUrl = "https://github.com/FabLrc.png";
+  const socialGithub = "https://github.com/FabLrc";
+  const socialLinkedin = "https://linkedin.com";
+  const socialEmail = "contact@example.com";
+
   return (
     <div className="container mx-auto px-4 py-16 max-w-3xl">
       {/* Section principale */}
@@ -26,7 +29,7 @@ export default async function AboutPage() {
         <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-primary/10">
           <Image
             src={avatarUrl}
-            alt={siteConfig.profileName}
+            alt={profileName}
             width={128}
             height={128}
             className="object-cover w-full h-full"
@@ -34,77 +37,51 @@ export default async function AboutPage() {
           />
         </div>
         
-        <h1 className="text-4xl font-bold mb-2">{siteConfig.profileName}</h1>
-        <p className="text-muted-foreground text-lg mb-6">@{siteConfig.profileUsername}</p>
+        <h1 className="text-4xl font-bold mb-2">{profileName}</h1>
+        <p className="text-muted-foreground text-lg mb-6">@{profileUsername}</p>
         
         {/* Liens sociaux */}
         <div className="flex justify-center gap-2 mb-8">
-          {siteConfig.socialGithub && (
+          {socialGithub && (
             <Button variant="outline" size="icon" asChild>
-              <a href={siteConfig.socialGithub} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <a href={socialGithub} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                 <Github className="w-4 h-4" />
               </a>
             </Button>
           )}
-          {siteConfig.socialLinkedin && (
+          {socialLinkedin && (
             <Button variant="outline" size="icon" asChild>
-              <a href={siteConfig.socialLinkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <a href={socialLinkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </a>
             </Button>
           )}
-          {siteConfig.socialTwitter && (
+          <Button variant="outline" size="icon" asChild>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+              <XIcon className="w-4 h-4" />
+            </a>
+          </Button>
+          {socialEmail && (
             <Button variant="outline" size="icon" asChild>
-              <a href={siteConfig.socialTwitter} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
-                <XIcon className="w-4 h-4" />
+              <a href={`mailto:${socialEmail}`} aria-label="Email">
+                <Mail className="w-4 h-4" />
               </a>
             </Button>
           )}
         </div>
       </div>
 
-      <Separator className="mb-12" />
+      <Separator className="my-12" />
 
-      {/* Biographie */}
-      <div className="prose prose-neutral dark:prose-invert max-w-none mb-12">
-        <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">
-          {siteConfig.profileBio}
+      {/* Bio */}
+      <div className="prose prose-neutral dark:prose-invert mx-auto">
+        <p>
+          {settings?.description || "Bienvenue sur mon blog personnel."}
         </p>
-      </div>
-
-      {/* Email de contact si disponible */}
-      {siteConfig.profileEmail && (
-        <>
-          <Separator className="mb-12" />
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-4">Contact</h2>
-            <p className="text-muted-foreground">
-              Email : <a href={`mailto:${siteConfig.profileEmail}`} className="text-primary hover:underline">{siteConfig.profileEmail}</a>
-            </p>
-          </div>
-        </>
-      )}
-
-      <Separator className="mb-12" />
-
-      {/* CTA */}
-      <div className="text-center space-y-4">
-        <p className="text-muted-foreground">
-          Envie d&apos;échanger ou de collaborer ?
+        <p>
+          Je suis un développeur passionné par les technologies web modernes.
+          J&apos;aime partager mes connaissances et mes découvertes à travers ce blog.
         </p>
-        <div className="flex justify-center gap-4">
-          <Button asChild variant="default">
-            <Link href="/contact">
-              <Mail className="w-4 h-4 mr-2" />
-              Me contacter
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/blog">
-              Lire mes articles
-            </Link>
-          </Button>
-        </div>
       </div>
     </div>
   );

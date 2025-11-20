@@ -1,4 +1,4 @@
-import { getArticles } from "@/lib/strapi";
+import { getAllPosts } from "@/lib/wordpress";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -33,10 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Articles dynamiques
-  const articles = await getArticles();
+  const articles = await getAllPosts(1000);
   const articlePages = articles.map((article) => ({
     url: `${siteUrl}/blog/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
+    lastModified: new Date(article.date),
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));

@@ -20,6 +20,11 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      "@next/next/no-img-element": "off", // Allow img for WordPress content
+    },
+  },
 ];
 
 export default eslintConfig;
