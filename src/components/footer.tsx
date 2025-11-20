@@ -3,23 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { GeneralSettings } from "@/types/wordpress";
 import { Rss } from "lucide-react";
 import Link from "next/link";
-
-// Fonction pour décoder les entités HTML
-function decodeHtmlEntities(text: string): string {
-  if (typeof window === 'undefined') {
-    // Côté serveur : utiliser replace pour les entités communes
-    return text
-      .replace(/&#039;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>');
-  }
-  // Côté client : utiliser DOMParser (plus fiable)
-  const txt = document.createElement('textarea');
-  txt.innerHTML = text;
-  return txt.value;
-}
+import { decodeHtmlEntities } from "@/lib/utils";
 
 interface FooterProps {
   siteConfig: GeneralSettings | null;

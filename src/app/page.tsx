@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { getAllPosts, getGeneralSettings } from "@/lib/wordpress";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 // Icône X (anciennement Twitter)
 const XIcon = ({ className }: { className?: string }) => (
@@ -29,7 +30,7 @@ export default async function Home() {
   // Hardcoded profile info for now as it's not standard in WP General Settings
   // You might want to fetch this from a specific page or user in the future
   const profileName = "Fabien"; // Replace with dynamic data if available
-  const profileBio = siteDescription;
+  const profileBio = decodeHtmlEntities(siteDescription);
   const avatarUrl = "https://github.com/FabLrc.png"; // Fallback to GitHub avatar
 
   return (

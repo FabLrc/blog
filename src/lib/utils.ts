@@ -42,3 +42,24 @@ export function formatReadingTime(minutes: number): string {
   }
   return `${minutes} min`;
 }
+
+/**
+ * Décoder les entités HTML dans une chaîne de caractères
+ * @param text - Le texte contenant des entités HTML
+ * @returns Le texte décodé
+ */
+export function decodeHtmlEntities(text: string): string {
+  if (typeof window === 'undefined') {
+    // Côté serveur : utiliser replace pour les entités communes
+    return text
+      .replace(/&#039;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+  }
+  // Côté client : utiliser DOMParser (plus fiable)
+  const txt = document.createElement('textarea');
+  txt.innerHTML = text;
+  return txt.value;
+}
