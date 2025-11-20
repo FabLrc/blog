@@ -45,12 +45,12 @@ export default function ArticleCard({
   return (
     <Link href={`/blog/${slug}`} className="group block">
       <Card className="h-full transition-all hover:shadow-lg overflow-hidden">
-        <div className="relative aspect-video w-full overflow-hidden">
+        <div className="relative w-full overflow-hidden bg-muted" style={{ height: '240px' }}>
           <Image
             src={featuredImage || "/placeholder.jpg"}
             alt={title}
             fill
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-contain transition-transform group-hover:scale-105"
           />
         </div>
         <CardHeader>

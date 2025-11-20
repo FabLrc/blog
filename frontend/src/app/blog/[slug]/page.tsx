@@ -125,12 +125,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             {/* Featured Image */}
             {post.featuredImage && (
-              <div className="mb-12 relative aspect-video w-full overflow-hidden rounded-xl">
+              <div className="mb-12 relative w-full overflow-hidden rounded-xl bg-muted" style={{ height: '500px' }}>
                 <Image
                   src={post.featuredImage.node.sourceUrl}
                   alt={post.featuredImage.node.altText || post.title}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
               </div>
