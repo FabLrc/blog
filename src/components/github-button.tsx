@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Github } from "lucide-react";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 interface GithubButtonProps {
   repo: string;
@@ -20,9 +21,10 @@ export function GithubButton({ repo }: GithubButtonProps) {
       href={`https://github.com/${repo}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium bg-background hover:bg-accent transition-colors text-foreground border-border shadow-sm"
+      className="relative overflow-hidden inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium bg-background hover:bg-accent transition-colors text-foreground border-border shadow-sm"
       aria-label="Voir le dépôt Github"
     >
+      <BorderBeam size={40} duration={6} />
       <Github className="w-5 h-5" />
       <span className="hidden sm:inline">Github</span>
       {stars !== null && (
