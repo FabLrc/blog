@@ -1,7 +1,9 @@
 import { ArticleNavigation } from "@/components/article-navigation";
-import ArticleSidebar from "@/components/article-sidebar";
+import ArticleTOC from "@/components/article-toc";
 import BlockRenderer from "@/components/block-renderer";
 import ReadingProgress from "@/components/reading-progress";
+import SocialShareSidebar from "@/components/social-share-sidebar";
+import SocialShareMobile from "@/components/social-share-mobile";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -86,8 +88,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           ]}
         />
 
-        <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px]">
-          <article>
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
+          <article className="max-w-4xl mx-auto lg:mx-0 w-full">
             {/* Header */}
             <header className="mb-8">
               <div className="mb-4 flex flex-wrap gap-2">
@@ -136,6 +138,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </div>
             )}
 
+            {/* Social Share Mobile */}
+            <SocialShareMobile
+              title={post.title}
+              url={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/blog/${post.slug}`}
+            />
+
+            {/* Table of Contents */}
+            <ArticleTOC />
+
             {/* Content */}
             <div className="prose prose-lg prose-neutral dark:prose-invert max-w-none">
               <BlockRenderer content={post.content || ''} />
@@ -148,15 +159,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             />
           </article>
 
-          {/* Sidebar */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-24">
-              <ArticleSidebar
-                title={post.title}
-                url={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/blog/${post.slug}`}
-              />
-            </div>
-          </aside>
+          {/* Social Share Sidebar */}
+          <SocialShareSidebar
+            title={post.title}
+            url={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/blog/${post.slug}`}
+          />
         </div>
       </div>
     </>
