@@ -12,7 +12,7 @@ export const client = new GraphQLClient(WORDPRESS_API_URL);
 /**
  * Fetch all published posts from WordPress
  */
-export async function getAllPosts(limit: number = 10, includeContent: boolean = false): Promise<Post[]> {
+export async function getAllPosts(limit: number = 10, includeContent: boolean = true): Promise<Post[]> {
   const query = gql`
     query GetAllPosts($limit: Int!) {
       posts(first: $limit, where: { orderby: { field: DATE, order: DESC } }) {
@@ -235,9 +235,12 @@ export async function getAdjacentPosts(currentPostDate: string, currentPostId: n
       return { previousPost: null, nextPost: null };
     }
 
+    // Posts are sorted DESC (newest first), so:
+    // - previousPost (older) = next index in array (currentIndex + 1)
+    // - nextPost (newer) = previous index in array (currentIndex - 1)
     return {
-      previousPost: currentIndex > 0 ? { slug: posts[currentIndex - 1].slug, title: posts[currentIndex - 1].title } : null,
-      nextPost: currentIndex < posts.length - 1 ? { slug: posts[currentIndex + 1].slug, title: posts[currentIndex + 1].title } : null,
+      previousPost: currentIndex < posts.length - 1 ? { slug: posts[currentIndex + 1].slug, title: posts[currentIndex + 1].title } : null,
+      nextPost: currentIndex > 0 ? { slug: posts[currentIndex - 1].slug, title: posts[currentIndex - 1].title } : null,
     };
   } catch (error) {
     console.error("Error fetching adjacent posts:", error);
