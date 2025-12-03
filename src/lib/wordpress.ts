@@ -429,16 +429,16 @@ export async function getAllPostsForSitemap(): Promise<SitemapPost[]> {
   try {
     // Fetch posts in batches of 100 to avoid timeouts
     while (hasNextPage) {
-      const data = await client.request<{
+      const response: {
         posts: {
           nodes: SitemapPost[];
           pageInfo: { hasNextPage: boolean; endCursor: string | null };
         };
-      }>(query, { first: 100, after: afterCursor });
+      } = await client.request(query, { first: 100, after: afterCursor });
 
-      allPosts.push(...data.posts.nodes);
-      hasNextPage = data.posts.pageInfo.hasNextPage;
-      afterCursor = data.posts.pageInfo.endCursor;
+      allPosts.push(...response.posts.nodes);
+      hasNextPage = response.posts.pageInfo.hasNextPage;
+      afterCursor = response.posts.pageInfo.endCursor;
     }
 
     return allPosts;
