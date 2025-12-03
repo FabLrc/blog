@@ -132,6 +132,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   src={post.featuredImage.node.sourceUrl}
                   alt={post.featuredImage.node.altText || post.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
                   className="object-contain"
                   priority
                 />

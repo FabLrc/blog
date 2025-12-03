@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/lib/wordpress";
+import { getAllPostsForSitemap } from "@/lib/wordpress";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -32,8 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Articles dynamiques
-  const articles = await getAllPosts(1000);
+  // Articles dynamiques (using optimized lightweight query)
+  const articles = await getAllPostsForSitemap();
   const articlePages = articles.map((article) => ({
     url: `${siteUrl}/blog/${article.slug}`,
     lastModified: new Date(article.date),

@@ -10,6 +10,96 @@ if (!WORDPRESS_API_URL) {
 export const client = new GraphQLClient(WORDPRESS_API_URL);
 
 /**
+ * Response type for paginated posts
+ */
+export interface PaginatedPostsResponse {
+  posts: Post[];
+  pageInfo: {
+    hasNextPage: boolean;
+    endCursor: string | null;
+  };
+  totalCount: number;
+}
+
+/**
+ * Fetch paginated posts from WordPress using cursor-based pagination
+ */
+export async function getPaginatedPosts(
+  first: number = 10,
+  after?: string,
+  categorySlug?: string
+): Promise<PaginatedPostsResponse> {
+  const query = gql`
+    query GetPaginatedPosts($first: Int!, $after: String, $categorySlug: String) {
+      posts(
+        first: $first
+        after: $after
+        where: { 
+          orderby: { field: DATE, order: DESC }
+          ${categorySlug ? 'categoryName: $categorySlug' : ''}
+        }
+      ) {
+        nodes {
+          id
+          databaseId
+          title
+          slug
+          date
+          excerpt
+          content
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          author {
+            node {
+              name
+              avatar {
+                url
+              }
+            }
+          }
+          categories {
+            nodes {
+              name
+              slug
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await client.request<{
+      posts: {
+        nodes: Post[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    }>(query, { first, after, categorySlug });
+
+    return {
+      posts: data.posts.nodes,
+      pageInfo: data.posts.pageInfo,
+      totalCount: data.posts.nodes.length,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated posts:", error);
+    return {
+      posts: [],
+      pageInfo: { hasNextPage: false, endCursor: null },
+      totalCount: 0,
+    };
+  }
+}
+
+/**
  * Fetch all published posts from WordPress
  */
 export async function getAllPosts(limit: number = 10, includeContent: boolean = true): Promise<Post[]> {
@@ -205,42 +295,66 @@ export async function searchPosts(searchQuery: string): Promise<Post[]> {
 
 /**
  * Get adjacent posts (previous and next) for a given post
+ * Optimized: Uses targeted GraphQL queries instead of fetching all posts
  */
 export async function getAdjacentPosts(currentPostDate: string, currentPostId: number): Promise<{
   previousPost: { slug: string; title: string } | null;
   nextPost: { slug: string; title: string } | null;
 }> {
-  try {
-    const allPostsQuery = gql`
-      query GetAllPostsSorted {
-        posts(first: 1000, where: { orderby: { field: DATE, order: DESC } }) {
-          nodes {
-            databaseId
-            slug
-            title
-            date
-          }
+  // Query for the previous post (older - published before current date)
+  const previousPostQuery = gql`
+    query GetPreviousPost($date: String!, $excludeId: Int!) {
+      posts(
+        first: 1
+        where: {
+          orderby: { field: DATE, order: DESC }
+          dateBefore: $date
+          notIn: [$excludeId]
+        }
+      ) {
+        nodes {
+          slug
+          title
         }
       }
-    `;
-
-    const data = await client.request<{
-      posts: { nodes: { databaseId: number; slug: string; title: string; date: string }[] };
-    }>(allPostsQuery);
-
-    const posts = data.posts.nodes;
-    const currentIndex = posts.findIndex((p) => p.databaseId === currentPostId);
-
-    if (currentIndex === -1) {
-      return { previousPost: null, nextPost: null };
     }
+  `;
 
-    // Posts are sorted DESC (newest first), so:
-    // - previousPost (older) = next index in array (currentIndex + 1)
-    // - nextPost (newer) = previous index in array (currentIndex - 1)
+  // Query for the next post (newer - published after current date)
+  const nextPostQuery = gql`
+    query GetNextPost($date: String!, $excludeId: Int!) {
+      posts(
+        first: 1
+        where: {
+          orderby: { field: DATE, order: ASC }
+          dateAfter: $date
+          notIn: [$excludeId]
+        }
+      ) {
+        nodes {
+          slug
+          title
+        }
+      }
+    }
+  `;
+
+  try {
+    // Execute both queries in parallel for better performance
+    const [previousData, nextData] = await Promise.all([
+      client.request<{ posts: { nodes: { slug: string; title: string }[] } }>(
+        previousPostQuery,
+        { date: currentPostDate, excludeId: currentPostId }
+      ),
+      client.request<{ posts: { nodes: { slug: string; title: string }[] } }>(
+        nextPostQuery,
+        { date: currentPostDate, excludeId: currentPostId }
+      ),
+    ]);
+
     return {
-      previousPost: currentIndex < posts.length - 1 ? { slug: posts[currentIndex + 1].slug, title: posts[currentIndex + 1].title } : null,
-      nextPost: currentIndex > 0 ? { slug: posts[currentIndex - 1].slug, title: posts[currentIndex - 1].title } : null,
+      previousPost: previousData.posts.nodes[0] || null,
+      nextPost: nextData.posts.nodes[0] || null,
     };
   } catch (error) {
     console.error("Error fetching adjacent posts:", error);
@@ -268,5 +382,63 @@ export async function subscribeToNewsletter(
       });
     }, 1000);
   });
+}
+
+/**
+ * Lightweight type for sitemap entries
+ */
+export interface SitemapPost {
+  slug: string;
+  date: string;
+}
+
+/**
+ * Fetch only slug and date for sitemap generation (optimized, lightweight query)
+ * Uses cursor-based pagination to handle large amounts of posts efficiently
+ */
+export async function getAllPostsForSitemap(): Promise<SitemapPost[]> {
+  const allPosts: SitemapPost[] = [];
+  let hasNextPage = true;
+  let afterCursor: string | null = null;
+  
+  const query = gql`
+    query GetPostsForSitemap($first: Int!, $after: String) {
+      posts(
+        first: $first
+        after: $after
+        where: { orderby: { field: DATE, order: DESC } }
+      ) {
+        nodes {
+          slug
+          date
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `;
+
+  try {
+    // Fetch posts in batches of 100 to avoid timeouts
+    while (hasNextPage) {
+      const data = await client.request<{
+        posts: {
+          nodes: SitemapPost[];
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        };
+      }>(query, { first: 100, after: afterCursor });
+
+      allPosts.push(...data.posts.nodes);
+      hasNextPage = data.posts.pageInfo.hasNextPage;
+      afterCursor = data.posts.pageInfo.endCursor;
+    }
+
+    return allPosts;
+  } catch (error) {
+    console.error("Error fetching posts for sitemap:", error);
+    return [];
+  }
 }
 
