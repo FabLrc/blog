@@ -148,7 +148,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <ArticleTOC />
 
             {/* Content */}
-            <div className="prose prose-lg prose-neutral dark:prose-invert max-w-none">
+            <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground/90 prose-strong:text-foreground prose-li:text-foreground/90">
               <BlockRenderer content={post.content || ''} />
             </div>
 

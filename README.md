@@ -38,16 +38,21 @@ cd frontend && npm install && npm run dev
 
 **Variables d'environnement**: 
 
-Créer `frontend/.env.local`:
+Créer `.env.local` à la racine du projet :
 ```
 # WordPress GraphQL API URL
+# Cette URL est utilisée pour :
+# - Les requêtes GraphQL vers WordPress
+# - Autoriser automatiquement les images provenant de ce domaine
 NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress-site.com/graphql
 
 # Site URL (pour SEO, sitemap, RSS, etc.)
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-> ⚠️ **Note**: Assurez-vous que votre instance WordPress a le plugin **WPGraphQL** installé et activé.
+> 💡 **Note sur les images** : Le hostname de `NEXT_PUBLIC_WORDPRESS_API_URL` est automatiquement ajouté à la configuration `images.remotePatterns` de Next.js. Cela permet d'utiliser les images hébergées sur votre WordPress sans configuration supplémentaire.
+
+> ⚠️ **Prérequis WordPress** : Assurez-vous que votre instance WordPress a le plugin **WPGraphQL** installé et activé.
 PORT=1337
 APP_KEYS="toBeModified1,toBeModified2"
 API_TOKEN_SALT=tobemodified

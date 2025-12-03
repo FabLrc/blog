@@ -236,3 +236,205 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
   }
 }
+
+/* Article Typography - Optimized for reading */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  font-size: 1.125rem; /* 18px base for better readability */
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+}
+
+.prose p {
+  margin-bottom: 1.5em;
+  line-height: 1.8;
+}
+
+/* Heading hierarchy with clear visual distinction */
+.prose h1 {
+  font-size: 2.5rem; /* 40px */
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose h2 {
+  font-size: 2rem; /* 32px */
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.prose h3 {
+  font-size: 1.5rem; /* 24px */
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose h4 {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose h5 {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.45;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose h6 {
+  font-size: 1rem; /* 16px */
+  line-height: 1.5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--muted-foreground);
+}
+
+/* Lists */
+.prose ul,
+.prose ol {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1.75rem;
+}
+
+.prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.75;
+}
+
+.prose li::marker {
+  color: var(--primary);
+}
+
+/* Blockquotes */
+.prose blockquote {
+  font-size: 1.25rem;
+  font-style: italic;
+  border-left: 4px solid var(--primary);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  color: var(--muted-foreground);
+}
+
+.prose blockquote p {
+  margin-bottom: 0;
+}
+
+/* Links */
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.prose a:hover {
+  color: var(--secondary);
+}
+
+/* Code inline */
+.prose code:not(pre code) {
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  background-color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+/* Images */
+.prose img {
+  border-radius: 0.75rem;
+  margin: 2rem auto;
+}
+
+.prose figure {
+  margin: 2rem 0;
+}
+
+.prose figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 0.75rem;
+}
+
+/* Tables */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 1rem;
+}
+
+.prose th {
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Horizontal rule */
+.prose hr {
+  border: none;
+  border-top: 2px solid var(--border);
+  margin: 3rem 0;
+}
+
+/* Strong and emphasis */
+.prose strong {
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.prose em {
+  font-style: italic;
+}
+
+/* Responsive typography */
+@media (min-width: 768px) {
+  .prose {
+    font-size: 1.1875rem; /* 19px on larger screens */
+  }
+  
+  .prose h1 {
+    font-size: 3rem; /* 48px */
+  }
+  
+  .prose h2 {
+    font-size: 2.25rem; /* 36px */
+  }
+  
+  .prose h3 {
+    font-size: 1.75rem; /* 28px */
+  }
+  
+  .prose h4 {
+    font-size: 1.375rem; /* 22px */
+  }
+}
