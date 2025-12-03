@@ -8,7 +8,7 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { getPostBySlug, getAdjacentPosts } from "@/lib/wordpress";
+import { getPostBySlug, getAdjacentPosts, getGeneralSettings } from "@/lib/wordpress";
 import { calculateReadingTime, formatReadingTime } from "@/lib/utils";
 import { Clock } from "lucide-react";
 import type { Metadata } from "next";
@@ -21,11 +21,64 @@ interface ArticlePageProps {
   }>;
 }
 
+/**
+ * Generate JSON-LD structured data for blog articles
+ * This helps search engines understand the content and enables rich snippets
+ */
+function generateArticleJsonLd(post: {
+  title: string;
+  slug: string;
+  date: string;
+  excerpt: string;
+  content: string;
+  author: { node: { name: string; avatar: { url: string } } };
+  featuredImage?: { node: { sourceUrl: string; altText: string } };
+  categories: { nodes: { name: string; slug: string }[] };
+}, siteUrl: string, siteName: string) {
+  const articleUrl = `${siteUrl}/blog/${post.slug}`;
+  const plainExcerpt = post.excerpt.replace(/<[^>]*>?/gm, '').slice(0, 160);
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": plainExcerpt,
+    "url": articleUrl,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": {
+      "@type": "Person",
+      "name": post.author.node.name,
+      "image": post.author.node.avatar.url,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": siteName,
+      "url": siteUrl,
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+    ...(post.featuredImage?.node?.sourceUrl && {
+      "image": {
+        "@type": "ImageObject",
+        "url": post.featuredImage.node.sourceUrl,
+      },
+    }),
+    "articleSection": post.categories.nodes.map(cat => cat.name).join(", "),
+    "keywords": post.categories.nodes.map(cat => cat.name).join(", "),
+  };
+}
+
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, siteConfig] = await Promise.all([
+    getPostBySlug(slug),
+    getGeneralSettings(),
+  ]);
 
   if (!post) {
     return {
@@ -33,21 +86,32 @@ export async function generateMetadata({
     };
   }
 
+  const siteUrl = siteConfig?.url || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const plainExcerpt = post.excerpt.replace(/<[^>]*>?/gm, '').slice(0, 160);
+  const articleUrl = `${siteUrl}/blog/${post.slug}`;
+  const keywords = post.categories.nodes.map(cat => cat.name);
+
   return {
     title: post.title,
-    description: post.excerpt.replace(/<[^>]*>?/gm, '').slice(0, 160),
+    description: plainExcerpt,
+    keywords: keywords,
+    alternates: {
+      canonical: articleUrl,
+    },
     openGraph: {
       title: post.title,
-      description: post.excerpt.replace(/<[^>]*>?/gm, '').slice(0, 160),
+      description: plainExcerpt,
       type: "article",
+      url: articleUrl,
       publishedTime: post.date,
       authors: post.author?.node?.name ? [post.author.node.name] : undefined,
       images: post.featuredImage?.node?.sourceUrl ? [{ url: post.featuredImage.node.sourceUrl }] : undefined,
+      siteName: siteConfig?.title || "Mon Blog",
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.excerpt.replace(/<[^>]*>?/gm, '').slice(0, 160),
+      description: plainExcerpt,
       images: post.featuredImage?.node?.sourceUrl ? [post.featuredImage.node.sourceUrl] : undefined,
     },
   };
@@ -55,11 +119,17 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, siteConfig] = await Promise.all([
+    getPostBySlug(slug),
+    getGeneralSettings(),
+  ]);
 
   if (!post) {
     notFound();
   }
+
+  const siteUrl = siteConfig?.url || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteName = siteConfig?.title || "Mon Blog";
 
   const formattedDate = new Date(post.date).toLocaleDateString("fr-FR", {
     year: "numeric",
@@ -75,8 +145,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // Get adjacent posts
   const { previousPost, nextPost } = await getAdjacentPosts(post.date, post.databaseId);
 
+  // Generate JSON-LD structured data
+  const jsonLd = generateArticleJsonLd(post, siteUrl, siteName);
+
   return (
     <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
       <ReadingProgress />
       
       <div className="container mx-auto max-w-7xl px-4 py-8">

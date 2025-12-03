@@ -301,15 +301,21 @@ export async function getAdjacentPosts(currentPostDate: string, currentPostId: n
   previousPost: { slug: string; title: string } | null;
   nextPost: { slug: string; title: string } | null;
 }> {
+  // Parse the date to extract year, month, day for WPGraphQL dateQuery
+  const date = new Date(currentPostDate);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+  const day = date.getDate();
+
   // Query for the previous post (older - published before current date)
   const previousPostQuery = gql`
-    query GetPreviousPost($date: String!, $excludeId: Int!) {
+    query GetPreviousPost($year: Int!, $month: Int!, $day: Int!, $excludeId: [ID]!) {
       posts(
         first: 1
         where: {
           orderby: { field: DATE, order: DESC }
-          dateBefore: $date
-          notIn: [$excludeId]
+          dateQuery: { before: { year: $year, month: $month, day: $day } }
+          notIn: $excludeId
         }
       ) {
         nodes {
@@ -322,13 +328,13 @@ export async function getAdjacentPosts(currentPostDate: string, currentPostId: n
 
   // Query for the next post (newer - published after current date)
   const nextPostQuery = gql`
-    query GetNextPost($date: String!, $excludeId: Int!) {
+    query GetNextPost($year: Int!, $month: Int!, $day: Int!, $excludeId: [ID]!) {
       posts(
         first: 1
         where: {
           orderby: { field: DATE, order: ASC }
-          dateAfter: $date
-          notIn: [$excludeId]
+          dateQuery: { after: { year: $year, month: $month, day: $day } }
+          notIn: $excludeId
         }
       ) {
         nodes {
@@ -344,11 +350,11 @@ export async function getAdjacentPosts(currentPostDate: string, currentPostId: n
     const [previousData, nextData] = await Promise.all([
       client.request<{ posts: { nodes: { slug: string; title: string }[] } }>(
         previousPostQuery,
-        { date: currentPostDate, excludeId: currentPostId }
+        { year, month, day, excludeId: [String(currentPostId)] }
       ),
       client.request<{ posts: { nodes: { slug: string; title: string }[] } }>(
         nextPostQuery,
-        { date: currentPostDate, excludeId: currentPostId }
+        { year, month, day, excludeId: [String(currentPostId)] }
       ),
     ]);
 
