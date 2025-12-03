@@ -30,7 +30,7 @@ function generateArticleJsonLd(post: {
   slug: string;
   date: string;
   excerpt: string;
-  content: string;
+  content?: string;
   author: { node: { name: string; avatar: { url: string } } };
   featuredImage?: { node: { sourceUrl: string; altText: string } };
   categories: { nodes: { name: string; slug: string }[] };
