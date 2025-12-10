@@ -1,6 +1,6 @@
 # 📝 Blog Full-Stack
 
-Blog moderne avec Next.js 15 et WordPress (Headless CMS via GraphQL). Design minimaliste avec mode sombre, thème ShadCN UI et **configuration centralisée dans WordPress**.
+Blog moderne propulsé par Next.js 15 et WordPress en mode Headless CMS via WPGraphQL. Design minimaliste avec mode sombre, interface ShadCN UI et **configuration centralisée dans WordPress**.
 
 ## 👀 Aperçu
 
@@ -19,27 +19,34 @@ Blog moderne avec Next.js 15 et WordPress (Headless CMS via GraphQL). Design min
 ![Article avec TOC](screenshots/screencapture-localhost-3000-blog-gemini-3-pro-le-nouveau-modele-qui-depasse-claude-sonnet-4-5-2025-11-20-15_04_27)
 
 ### Contact
-![Menu mobile](screenshots/screencapture-localhost-3000-contact-2025-11-20-14_57_42.png)
+![Page de contact](screenshots/screencapture-localhost-3000-contact-2025-11-20-14_57_42.png)
 
 </div>
 
-## 🚀 Stack
+## 🚀 Stack Technique
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, ShadCN UI
-- **Backend**: WordPress (Headless via WPGraphQL)
-- **Autres**: html-react-parser, DM Sans, Lucide Icons
+### Frontend
+- **Framework** : Next.js 15 (App Router) avec Turbopack
+- **Langage** : TypeScript 5
+- **Styling** : Tailwind CSS v4
+- **UI Components** : ShadCN UI (Radix UI primitives)
+- **Animations** : Motion (Framer Motion)
+- **Icons** : Lucide React
+- **Font** : DM Sans (Google Fonts)
 
 ## 🏁 Démarrage
 
+### Installation
+
 ```bash
-# Frontend uniquement
-cd frontend && npm install && npm run dev
+npm install
 ```
 
-**Variables d'environnement**: 
+### Configuration
 
-Créer `.env.local` à la racine du projet :
-```
+Créer un fichier `.env.local` à la racine du projet :
+
+```env
 # WordPress GraphQL API URL
 # Cette URL est utilisée pour :
 # - Les requêtes GraphQL vers WordPress
@@ -50,162 +57,94 @@ NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress-site.com/graphql
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-> 💡 **Note sur les images** : Le hostname de `NEXT_PUBLIC_WORDPRESS_API_URL` est automatiquement ajouté à la configuration `images.remotePatterns` de Next.js. Cela permet d'utiliser les images hébergées sur votre WordPress sans configuration supplémentaire.
+> 💡 **Configuration automatique des images** : Le hostname de `NEXT_PUBLIC_WORDPRESS_API_URL` est automatiquement extrait et ajouté à `images.remotePatterns` de Next.js pour autoriser le chargement des images WordPress.
 
-> ⚠️ **Prérequis WordPress** : Assurez-vous que votre instance WordPress a le plugin **WPGraphQL** installé et activé.
-PORT=1337
-APP_KEYS="toBeModified1,toBeModified2"
-API_TOKEN_SALT=tobemodified
-ADMIN_JWT_SECRET=tobemodified
-TRANSFER_TOKEN_SALT=tobemodified
-JWT_SECRET=tobemodified
-ENCRYPTION_KEY=tobemodified
-```
+> ⚠️ **Prérequis WordPress** : Votre instance WordPress doit avoir le plugin **WPGraphQL** installé et activé.
 
-## 🐳 Utilisation de Docker
-
-Si vous préférez lancer l'application entière (frontend + backend) dans un seul conteneur via Docker Compose :
-
-1. Construire l'image (depuis la racine du projet) :
+### Lancement en développement
 
 ```bash
-sudo docker-compose build
+npm run dev
 ```
 
-2. Démarrer le conteneur en arrière-plan :
+Le site sera accessible sur [http://localhost:3000](http://localhost:3000)
+
+### Build de production
 
 ```bash
-sudo docker-compose up -d
+npm run build
+npm start
 ```
-
-Accès :
-- Frontend : http://localhost:3000
-- Strapi Admin : http://localhost:1337/admin
-
-Notes :
-- Les variables sensibles (secrets Strapi) sont lues depuis `backend/.env` (ou vous pouvez définir des variables d'environnement dans `docker-compose.yml`).
-- Cette configuration construit une seule image contenant frontend et backend pour un usage local/dev rapide. Pour un déploiement en production, il est recommandé d'utiliser des conteneurs séparés (un conteneur frontend, un conteneur backend) et de gérer les secrets via un store dédié.
-
-### Déploiement sur NAS et mises à jour automatiques
-
-Voici une méthode simple pour déployer sur un NAS (type gestionnaire de conteneurs, testé avec CasaOS) et mettre à jour automatiquement depuis GitHub :
-
-1. Utiliser GHCR (GitHub Container Registry) pour héberger les images. Le workflow `.github/workflows/build-and-push.yml` (fourni) build et push les images `blog-backend` et `blog-frontend` sur GHCR.
-2. Sur le NAS, copier `docker-compose.nas.yml` et remplacer `<OWNER>` par ton nom GitHub/organisation dans les images.
-3. Démarrer les services :
-
-```bash
-docker-compose -f docker-compose.nas.yml up -d
-```
-
-4. Pour mise à jour automatique, Watchtower est inclus dans le compose (`watchtower`) et vérifiera périodiquement si de nouvelles images sont disponibles puis mettra à jour les conteneurs.
-
-Notes :
-- Assure-toi que les volumes (`data`, `uploads`) pointent vers des emplacements persistants sur le NAS.
-- Crée les secrets GitHub : `GHCR_PAT` (token) et configure-le dans les Secrets du repo pour permettre le push des images depuis GitHub Actions.
-- Watchtower a accès au socket Docker via `/var/run/docker.sock`.
-
 
 ## ✨ Fonctionnalités
 
+### Contenu et navigation
 - ✅ Configuration centralisée dans WordPress (titre, description, URL)
-- ✅ Multi-catégories par article avec filtres
-- ✅ Recherche instantanée (`Ctrl+K`) en temps réel
-- ✅ Table des matières interactive avec scroll spy
-- ✅ Mode sombre/clair avec persistance
+- ✅ Multi-catégories par article avec filtres dynamiques
+- ✅ Recherche instantanée (`Ctrl+K` / `Cmd+K`) en temps réel
+- ✅ Navigation précédent/suivant entre articles
 - ✅ Breadcrumb SEO avec Schema.org JSON-LD
+- ✅ Flux RSS & Sitemap XML dynamiques
+
+### Interface utilisateur
+- ✅ Table des matières interactive avec scroll spy
+- ✅ Mode sombre/clair avec persistance localStorage
 - ✅ Sidebar responsive (TOC + partage social)
-- ✅ Rendu de contenu WordPress (HTML)
-- ✅ Navigation précédent/suivant
-- ✅ Temps de lecture estimé
-- ✅ Flux RSS & Sitemap XML
-- ✅ Open Graph & Twitter Cards
-- ✅ ISR avec revalidation
-- ✅ Coloration syntaxique des blocs de code
 - ✅ Barre de progression de lecture
-- ✅ Bouton vers le repo Github (avec étoiles)
+- ✅ Design minimaliste et épuré
+- ✅ Animations fluides avec Motion
 
-## 📂 Structure
+### Article et contenu
+- ✅ Rendu HTML WordPress avec sanitization
+- ✅ Coloration syntaxique des blocs de code (Shiki)
+- ✅ Images optimisées avec Next.js Image
+- ✅ Temps de lecture estimé
+- ✅ Partage social (X, LinkedIn, WhatsApp, Email)
+- ✅ Support Markdown enrichi
 
-```
-blog/
-└── frontend/               # Next.js App
-    └── src/
-        ├── app/            # Routes (App Router)
-        │   ├── layout.tsx          # Layout global + metadata
-        │   ├── page.tsx            # Homepage (liste articles)
-        │   ├── blog/               # Liste + articles
-        │   ├── about/              # À propos
-        │   ├── contact/            # Contact
-        │   ├── rss.xml/            # Flux RSS
-        │   └── sitemap.ts          # Sitemap
-        │
-        ├── components/     # Composants React
-        │   ├── navbar.tsx          # Navigation principale
-        │   ├── footer.tsx          # Footer
-        │   ├── breadcrumb.tsx      # Fil d'Ariane + Schema.org
-        │   ├── blog-list.tsx       # Liste avec filtres
-        │   ├── article-sidebar.tsx # TOC + Partage
-        │   ├── contact-form.tsx    # Formulaire contact
-        │   └── ui/                 # ShadCN components
-        │
-        ├── lib/            # Utils
-        │   ├── wordpress.ts        # API WordPress GraphQL
-        │   └── utils.ts            # Helpers
-        │
-        └── types/          # TypeScript
-            └── wordpress.ts        # Interfaces WordPress
-```
+### SEO et performance
+- ✅ Open Graph & Twitter Cards
+- ✅ ISR (Incremental Static Regeneration)
+- ✅ Metadata dynamiques depuis WordPress
+- ✅ Sitemap XML automatique
+- ✅ robots.txt configuré
+- ✅ Accessibilité (skip links, ARIA labels)
 
-## 🏗️ Architecture
-
-### Configuration centralisée
-- **Toutes les données du site** sont gérées dans WordPress
-- Le frontend récupère la configuration via `getGeneralSettings()` depuis WPGraphQL
-- Fallback automatique sur des valeurs par défaut si WordPress est indisponible
-
-### Pattern Server/Client Components
-- **Server Components** : Récupèrent les données depuis WordPress (pages, layout)
-- **Client Components** : Gèrent l'interactivité (filtres, recherche, formulaires)
-- Configuration passée via props depuis serveur vers client
-
-### Flux de données
-```
-WordPress Admin → Réglages → WPGraphQL API → getGeneralSettings() → Server Components → Props → Client Components
-```
-
-## ⚙️ Configuration
-
-### 🎛️ Configuration du site (WordPress CMS)
-Toute la configuration du site est gérée via WordPress et récupérée automatiquement par le frontend via WPGraphQL.
+### Extras
+- ✅ Formulaire de contact
+- ✅ Page À propos
+- ✅ Bouton vers le repo Github (avec étoiles dynamiques)
+- ✅ Support React 19
 
 ## 📊 Données récupérées depuis WordPress
 
 Le frontend récupère dynamiquement les données suivantes depuis WordPress via WPGraphQL :
 
 ### 🌐 Configuration générale du site (`GeneralSettings`)
-Récupérée via `getGeneralSettings()` et utilisée dans :
-- **Métadonnées SEO** (`layout.tsx`)
-- **Flux RSS** (`rss.xml/route.ts`)
-- **Footer** (`footer.tsx`)
-- **Navbar** (`navbar.tsx`)
+Récupérée via `getGeneralSettings()` :
 
 **Champs disponibles** :
 - `title` : Titre du site (ex: "Mon Blog")
 - `description` : Description du site pour le SEO
 - `url` : URL racine du site WordPress
 
+**Utilisée dans** :
+- Métadonnées SEO (`layout.tsx`)
+- Flux RSS (`rss.xml/route.ts`)
+- Footer (`footer.tsx`)
+- Navbar (`navbar.tsx`)
+
 ### 📝 Articles de blog (`Post`)
-Récupérés via `getAllPosts()` et `getPostBySlug()` :
+Récupérés via `getAllPosts()`, `getPostBySlug()`, `getPaginatedPosts()`, `searchPosts()` :
 
 **Champs de base** :
 - `id` : Identifiant unique GraphQL
 - `databaseId` : ID numérique dans la base de données
 - `title` : Titre de l'article
-- `slug` : URL-friendly slug (ex: "mon-article")
+- `slug` : Slug URL-friendly (ex: "mon-article")
 - `date` : Date de publication (ISO 8601)
 - `excerpt` : Extrait/résumé de l'article (HTML)
-- `content` : Contenu complet de l'article (HTML) - *optionnel, chargé uniquement sur les pages d'articles*
+- `content` : Contenu complet de l'article (HTML)
 
 **Image à la une** (`featuredImage`) :
 - `sourceUrl` : URL de l'image
@@ -227,90 +166,172 @@ Récupérées via `getAllCategories()` :
 - `slug` : Slug URL
 - `count` : Nombre d'articles dans cette catégorie
 
-### 🔍 Recherche
-Recherche d'articles via `searchPosts(query)` qui retourne les mêmes champs que `getAllPosts()`
-
 ### ⬅️➡️ Navigation entre articles
-Récupération des articles adjacents via `getAdjacentPosts()` :
+Récupération des articles adjacents via `getAdjacentPosts(slug)` :
 - `previousPost` : Article précédent (`{ slug, title }`)
 - `nextPost` : Article suivant (`{ slug, title }`)
 
-### 📍 Utilisation des données
+### 📍 Utilisation des données par composant
 
 | Composant/Page | Données WordPress utilisées |
 |----------------|----------------------------|
-| `layout.tsx` | `title`, `description`, `url` (SEO, métadonnées) |
-| `page.tsx` (accueil) | Liste des articles récents |
-| `blog/page.tsx` | Tous les articles + catégories |
+| `layout.tsx` | `GeneralSettings` (title, description, url) |
+| `page.tsx` (accueil) | Liste des 6 articles les plus récents |
+| `blog/page.tsx` | Tous les articles + catégories pour filtres |
 | `blog/[slug]/page.tsx` | Article complet avec auteur, catégories, image |
-| `navbar.tsx` | Titre du site |
-| `footer.tsx` | Titre du site |
+| `navbar.tsx` | Titre du site depuis `GeneralSettings` |
+| `footer.tsx` | Titre du site depuis `GeneralSettings` |
 | `rss.xml/route.ts` | Articles + métadonnées du site |
 | `sitemap.ts` | Tous les slugs d'articles |
-| `search-dialog.tsx` | Recherche d'articles |
+| `search-dialog.tsx` | Recherche d'articles via `searchPosts()` |
 | `article-navigation.tsx` | Articles précédent/suivant |
+| `blog-list.tsx` | Articles paginés avec filtres catégorie |
 
-### 🔧 Configuration WordPress requise
+## 🔧 Configuration WordPress requise
 
 Pour que le frontend fonctionne correctement, assurez-vous que WordPress est configuré avec :
 
-1. **Plugin WPGraphQL** installé et activé
-2. **Paramètres généraux** remplis (Réglages → Général) :
-   - Titre du site
-   - Slogan (utilisé comme description)
-   - URL WordPress
-3. **Articles publiés** avec :
-   - Images à la une
-   - Catégories assignées
-   - Extraits renseignés (sinon générés automatiquement)
+### 1. Plugin WPGraphQL
+- Installer et activer le plugin **WPGraphQL** (version 1.13+ recommandée)
+- Accessible depuis WordPress Admin → Extensions → Ajouter
+- Vérifier que l'endpoint `/graphql` est accessible
 
-### 🎨 Thème visuel
-- **Couleurs et design** : `frontend/src/app/globals.css`
-- **Configuration du site** : WordPress → Réglages → Général
+### 2. Paramètres généraux
+Remplir dans **Réglages → Général** :
+- **Titre du site** : Utilisé dans navbar, footer, metadata
+- **Slogan** : Utilisé comme description SEO
+- **URL WordPress** : URL de base du site
 
-## 🎨 Personnalisation
+### 3. Contenu des articles
+Pour chaque article publié, s'assurer de :
+- ✅ Assigner une **image à la une** (recommandé: 1200x630px)
+- ✅ Assigner au moins une **catégorie**
+- ✅ Renseigner un **extrait** (sinon généré automatiquement)
+- ✅ Structurer le contenu avec des **titres H2/H3** (pour la TOC)
 
-### Changer le titre du blog
-Via **WordPress Admin** → Réglages → Général → Titre du site
+### 4. Structure recommandée
+- Créer des catégories pertinentes (Tech, Design, Business, etc.)
+- Utiliser des slugs URL-friendly
+- Optimiser les images avant upload
+- Utiliser le champ Alt Text pour l'accessibilité
 
-### Changer la description
-Via **WordPress Admin** → Réglages → Général → Slogan
+## ⚙️ Configuration et personnalisation
 
-### URLs importantes
-- `/` - Page d'accueil (profil social)
-- `/blog` - Liste des articles avec filtres
-- `/blog?category=slug` - Articles filtrés par catégorie
-- `/blog/[slug]` - Article individuel avec TOC et partage
-- `/about` - À propos
-- `/contact` - Contact (formulaire + liens sociaux)
-- `/rss.xml` - Flux RSS dynamique
-- `/sitemap.xml` - Sitemap SEO
-- `/robots.txt` - Instructions robots
+### Personnaliser le thème
+Modifier les variables CSS dans `src/app/globals.css` :
 
-### API WordPress
-- `https://your-wordpress-site.com/graphql` - API GraphQL
-- `https://your-wordpress-site.com/wp-admin` - Panel d'administration WordPress
+```css
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    /* ... autres variables */
+  }
 
-### Raccourcis clavier
-- `Ctrl+K` / `Cmd+K` - Ouvrir la recherche
-- `↑` / `↓` - Navigation dans les résultats
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... autres variables */
+  }
+}
+```
+
+### Changer la police
+
+Modifier dans `src/app/layout.tsx` :
+
+```typescript
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+```
+
+## ⌨️ Raccourcis clavier
+
+- `Ctrl+K` / `Cmd+K` - Ouvrir la barre de recherche
+- `↑` / `↓` - Naviguer dans les résultats de recherche
 - `Entrée` - Sélectionner un résultat
 - `Échap` - Fermer la recherche
 
+## 🚀 Déploiement
+
+### Vercel (recommandé)
+
+1. Push le code sur GitHub
+2. Importer le projet sur [Vercel](https://vercel.com)
+3. Configurer les variables d'environnement :
+   - `NEXT_PUBLIC_WORDPRESS_API_URL`
+   - `NEXT_PUBLIC_SITE_URL`
+4. Déployer
+
+### Autres plateformes
+
+Le projet supporte `output: "standalone"` pour :
+- **Docker** : Créer une image Docker avec `Dockerfile`
+- **VPS** : Déployer avec PM2 ou systemd
+- **Netlify** : Adapter pour les Edge Functions
+
+## 🐳 Docker (optionnel)
+
+Un `Dockerfile` est inclus pour le déploiement containerisé :
+
+```bash
+# Build l'image
+docker build -t blog-nextjs .
+
+# Run le conteneur
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress.com/graphql \
+  -e NEXT_PUBLIC_SITE_URL=https://your-blog.com \
+  blog-nextjs
+```
+
 ## 🎯 Roadmap
 
-- [ ] View Transitions API
-- [ ] Optimisation des images (blur placeholder, WebP/AVIF)
-- [ ] Système de thèmes saisonniers 🎃🎄🧧 (auto-switch Halloween, Noël, Nouvel an chinois)
-- [ ] Mode Lecture immersif
+### À court terme
+- [ ] View Transitions API (navigation fluide)
+- [ ] Images Open Graph dynamiques avec `@vercel/og`
 - [ ] Newsletter fonctionnelle (Resend/SendGrid)
-- [ ] Images Open Graph dynamiques (@vercel/og)
-- [ ] CI/CD
+- [ ] Commentaires
 
----
+### À moyen terme
+- [ ] Optimisation des images (blur placeholder automatique)
+- [ ] Mode Lecture immersif (sans distractions)
+- [ ] Support multi-langue (i18n)
+- [ ] Dark mode par défaut selon système
 
-✨ Développé par [FabLrc](https://github.com/FabLrc)
+### À long terme
+- [ ] Système de thèmes saisonniers 🎃🎄🧧 (auto-switch Halloween, Noël, Nouvel an chinois)
+- [ ] PWA (Progressive Web App)
+- [ ] Analytics intégré
+- [ ] CI/CD automatisé
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/amazing-feature`)
+3. Commit les changements (`git commit -m 'Add amazing feature'`)
+4. Push sur la branche (`git push origin feature/amazing-feature`)
+5. Ouvrir une Pull Request
+
+## 📝 Scripts disponibles
+
+- `npm run dev` - Lancer le serveur de développement avec Turbopack
+- `npm run build` - Build de production
+- `npm start` - Démarrer le serveur de production
+- `npm run lint` - Linter le code avec ESLint
 
 ## 📄 Licence
 
-MIT
+MIT © [FabLrc](https://github.com/FabLrc)
+
+---
+
+✨ **Développé avec ❤️ par [FabLrc](https://github.com/FabLrc)**
+
+Si ce projet vous plaît, n'hésitez pas à lui donner une ⭐️ sur GitHub !
