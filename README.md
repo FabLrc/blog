@@ -55,11 +55,19 @@ NEXT_PUBLIC_WORDPRESS_API_URL=https://your-wordpress-site.com/graphql
 
 # Site URL (pour SEO, sitemap, RSS, etc.)
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# GitHub Token (Optionnel - recommandé pour éviter les erreurs 403)
+# Améliore la limite de rate de l'API GitHub de 60 à 5000 requêtes/heure
+# Pour créer un token : https://github.com/settings/tokens
+# Permissions : Aucune permission nécessaire (token public read-only)
+GITHUB_TOKEN=
 ```
 
 > 💡 **Configuration automatique des images** : Le hostname de `NEXT_PUBLIC_WORDPRESS_API_URL` est automatiquement extrait et ajouté à `images.remotePatterns` de Next.js pour autoriser le chargement des images WordPress.
 
 > ⚠️ **Prérequis WordPress** : Votre instance WordPress doit avoir le plugin **WPGraphQL** installé et activé.
+
+> 💡 **GitHub Token (Optionnel)** : Pour éviter les erreurs 403 lors de l'affichage du nombre d'étoiles GitHub, vous pouvez créer un token personnel sans aucune permission. Cela augmente la limite de 60 à 5000 requêtes/heure. Sans token, un système de cache en mémoire limite les appels à l'API.
 
 ### Lancement en développement
 

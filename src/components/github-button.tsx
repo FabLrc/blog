@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Github } from "lucide-react";
 import { BorderBeam } from "@/components/ui/border-beam";
@@ -8,12 +10,20 @@ interface GithubButtonProps {
 
 export function GithubButton({ repo }: GithubButtonProps) {
   const [stars, setStars] = useState<number | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`https://api.github.com/repos/${repo}`)
-      .then((res) => res.json())
-      .then((data) => setStars(data.stargazers_count))
-      .catch(() => setStars(null));
+    // Utiliser notre propre API route pour éviter les problèmes de rate limiting
+    fetch(`/api/github-stars?repo=${encodeURIComponent(repo)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then((data) => setStars(data.stars))
+      .catch(() => {
+        setError(true);
+        setStars(null);
+      });
   }, [repo]);
 
   return (
