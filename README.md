@@ -26,7 +26,7 @@ Blog moderne propulsé par Next.js 15 et WordPress en mode Headless CMS via WPGr
 ## 🚀 Stack Technique
 
 ### Frontend
-- **Framework** : Next.js 15 (App Router) avec Turbopack
+- **Framework** : Next.js 16 (App Router) avec Turbopack
 - **Langage** : TypeScript 5
 - **Styling** : Tailwind CSS v4
 - **UI Components** : ShadCN UI (Radix UI primitives)
