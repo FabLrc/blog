@@ -16,6 +16,9 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Enable ISR with 1 hour revalidation (fallback if webhook fails)
+export const revalidate = 3600;
+
 export default async function Home() {
   const [posts, settings] = await Promise.all([
     getAllPosts(4),

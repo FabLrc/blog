@@ -3,6 +3,9 @@ import { BlogList } from "@/components/blog-list";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Suspense } from "react";
 
+// Enable ISR with 1 hour revalidation (fallback if webhook fails)
+export const revalidate = 3600;
+
 export default async function BlogPage() {
   const [posts, categories] = await Promise.all([
     getAllPosts(100), // Fetch more posts for the list

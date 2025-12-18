@@ -15,6 +15,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+// Enable ISR with 1 hour revalidation (fallback if webhook fails)
+export const revalidate = 3600;
+
 interface ArticlePageProps {
   params: Promise<{
     slug: string;
