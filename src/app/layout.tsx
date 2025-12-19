@@ -1,5 +1,6 @@
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import SeasonalTheme from "@/components/seasonal-theme";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getGeneralSettings } from "@/lib/wordpress";
 import type { Metadata } from "next";
@@ -64,6 +65,7 @@ export default async function RootLayout({
           Aller au contenu principal
         </a>
         <ThemeProvider>
+          <SeasonalTheme />
           <Navbar siteConfig={siteConfig} />
           <main id="main-content" className="flex-1">{children}</main>
           <Footer siteConfig={siteConfig} />
