@@ -25,6 +25,11 @@ export default function ArticleTOC() {
     const items: TocItem[] = [];
 
     elements.forEach((element, index) => {
+      // Ignorer les titres qui sont à l'intérieur d'un blockquote
+      if (element.closest("blockquote")) {
+        return;
+      }
+
       const id = element.id || `heading-${index}`;
       if (!element.id) {
         element.id = id;
