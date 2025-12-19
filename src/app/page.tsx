@@ -1,6 +1,6 @@
 import ArticleCard from "@/components/article-card";
 import { FeaturedArticle } from "@/components/featured-article";
-import { HomeParticles } from "@/components/home-particles";
+import { WavyBackground } from "@/components/ui/wavy-background";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -39,9 +39,8 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen w-full">
-      <div className="relative w-full">
-        <HomeParticles />
-        <div className="container mx-auto max-w-4xl px-4 pt-12 pb-6">
+      <WavyBackground className="w-full" containerClassName="h-auto py-12">
+        <div className="container mx-auto max-w-4xl px-4">
           {/* Profile Section */}
           <div className="text-center">
             <Avatar className="mx-auto mb-4 h-24 w-24">
@@ -91,7 +90,7 @@ export default async function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </WavyBackground>
 
       <div className="container mx-auto max-w-4xl px-4 pb-12">
         <Separator className="my-12" />
