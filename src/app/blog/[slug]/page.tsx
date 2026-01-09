@@ -224,7 +224,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             {/* Social Share Mobile */}
             <SocialShareMobile
               title={post.title}
-              url={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/blog/${post.slug}`}
+              url={`${(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, '')}/blog/${post.slug}`}
             />
 
             {/* Table of Contents */}
@@ -245,7 +245,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Social Share Sidebar */}
           <SocialShareSidebar
             title={post.title}
-            url={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/blog/${post.slug}`}
+            url={`${(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, '')}/blog/${post.slug}`}
           />
         </div>
       </div>
