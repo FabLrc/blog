@@ -181,6 +181,29 @@ export default function BlockRenderer({ content }: BlockRendererProps) {
           }
         }
 
+        // Replace <a> to open in new tab
+        if (domNode.name === 'a') {
+          const { href, ...otherAttribs } = domNode.attribs;
+          
+          // Only modify external links (not internal anchors or relative links)
+          if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...otherAttribs}
+              >
+                {domNode.children && parse(domNode.children.map(child => {
+                  if (child instanceof Text) return child.data;
+                  if (child instanceof Element) return child;
+                  return '';
+                }).join(''))}
+              </a>
+            );
+          }
+        }
+
         // Replace headings with HeadingWithAnchor
         if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)) {
           const text = extractTextContent(domNode);
