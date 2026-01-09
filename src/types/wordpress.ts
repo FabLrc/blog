@@ -70,3 +70,38 @@ export interface Menu {
   }[];
 }
 
+export interface Page {
+  id: string;
+  databaseId: number;
+  title: string;
+  slug: string;
+  content: string;
+  date: string;
+  modified: string;
+  featuredImage?: {
+    node: {
+      sourceUrl: string;
+      altText: string;
+    };
+  };
+}
+
+export interface AuthorInfo {
+  id: string;
+  databaseId: number;
+  name: string;
+  firstName: string;
+  lastName: string;
+  description: string;
+  avatar: {
+    url: string;
+  };
+  url?: string;
+  social?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    email?: string;
+  };
+}
+

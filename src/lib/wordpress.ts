@@ -1,5 +1,39 @@
 import { GraphQLClient, gql } from 'graphql-request';
-import { Post, Category, GeneralSettings } from '@/types/wordpress';
+import { Post, Category, GeneralSettings, Page, AuthorInfo } from '@/types/wordpress';
+
+/**
+ * Decode HTML entities in a string
+ * Useful for WordPress content that contains encoded characters
+ */
+export function decodeHtmlEntities(text: string): string {
+  if (!text) return '';
+  
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#039;': "'",
+    '&apos;': "'",
+    '&#x27;': "'",
+    '&#x2F;': '/',
+    '&#8217;': "'",
+    '&#8216;': "'",
+    '&#8220;': '"',
+    '&#8221;': '"',
+    '&#8211;': '–',
+    '&#8212;': '—',
+    '&nbsp;': ' ',
+    '&hellip;': '…',
+  };
+  
+  let decoded = text;
+  for (const [entity, char] of Object.entries(entities)) {
+    decoded = decoded.replace(new RegExp(entity, 'g'), char);
+  }
+  
+  return decoded;
+}
 
 const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
 
@@ -445,6 +479,123 @@ export async function getAllPostsForSitemap(): Promise<SitemapPost[]> {
   } catch (error) {
     console.error("Error fetching posts for sitemap:", error);
     return [];
+  }
+}
+
+/**
+ * Fetch a page by its slug
+ */
+export async function getPageBySlug(slug: string): Promise<Page | null> {
+  const query = gql`
+    query GetPageBySlug($slug: ID!) {
+      page(id: $slug, idType: URI) {
+        id
+        databaseId
+        title
+        slug
+        content
+        date
+        modified
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await client.request<{ page: Page | null }>(query, { slug });
+    if (data.page) {
+      return {
+        ...data.page,
+        title: decodeHtmlEntities(data.page.title),
+        content: data.page.content,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching page:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch author information (primary author/site owner)
+ * Uses posts to get the author info since user queries may require authentication
+ */
+export async function getAuthorInfo(): Promise<AuthorInfo | null> {
+  const query = gql`
+    query GetAuthorInfo {
+      posts(first: 1, where: { orderby: { field: DATE, order: DESC } }) {
+        nodes {
+          author {
+            node {
+              id
+              databaseId
+              name
+              firstName
+              lastName
+              description
+              avatar {
+                url
+              }
+              url
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await client.request<{ 
+      posts: { 
+        nodes: Array<{ 
+          author: { 
+            node: AuthorInfo 
+          } 
+        }> 
+      } 
+    }>(query);
+    
+    if (data.posts.nodes.length > 0 && data.posts.nodes[0].author?.node) {
+      const author = data.posts.nodes[0].author.node;
+      return {
+        ...author,
+        name: decodeHtmlEntities(author.name || ''),
+        description: decodeHtmlEntities(author.description || ''),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching author info:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch total posts count by counting all posts
+ */
+export async function getPostsCount(): Promise<number> {
+  const query = gql`
+    query GetPostsCount {
+      posts(first: 100) {
+        nodes {
+          id
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await client.request<{ posts: { nodes: Array<{ id: string }> } }>(query);
+    return data.posts.nodes.length || 0;
+  } catch (error) {
+    console.error("Error fetching posts count:", error);
+    return 0;
   }
 }
 
